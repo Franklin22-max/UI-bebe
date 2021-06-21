@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="UI bebe" />
+		<Option pch_mode="2" />
+		<Option compiler="bebe_1_gnu_gcc_compiler" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/UI bebe" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="bebe_1_gnu_gcc_compiler" />
+				<Compiler>
+					<Add option="-std=c++1z" />
+					<Add option="-g" />
+					<Add directory="C:/SDL/SDL2-2.0.10/i686-w64-mingw32/include" />
+					<Add directory="C:/SDL/SDL2_ttf-2.0.15/i686-w64-mingw32/include" />
+					<Add directory="C:/boost_1_74_0/boost_1_74_0" />
+					<Add directory="C:/SDL/SDL2-2.0.10/i686-w64-mingw32/include/SDL2" />
+					<Add directory="C:/SDL/SDL_image-devel-2.0.5-mingw/SDL2_image-2.0.5/i686-w64-mingw32/include" />
+					<Add directory="C:/SDL/SDL2_mixer-2.0.4/i686-w64-mingw32/include" />
+				</Compiler>
+				<Linker>
+					<Add option="-lmingw32 -lSDL2main -lSDL2 -lSDL2_ttf -lSDL2_image -lSDL2_mixer" />
+					<Add option="-lboost_filesystem -lboost_regex -lboost_system" />
+					<Add library="C:/Program Files/CodeBlocks/MinGW/lib/libcomdlg32.a" />
+					<Add library="C:/Program Files/CodeBlocks/MinGW/lib/libgdi32.a" />
+					<Add directory="C:/SDL/SDL2-2.0.10/i686-w64-mingw32/lib" />
+					<Add directory="C:/SDL/SDL2_ttf-2.0.15/i686-w64-mingw32/lib" />
+					<Add directory="C:/Users/USER/Documents/BOOST LIBS" />
+					<Add directory="C:/SDL/SDL_image-devel-2.0.5-mingw/SDL2_image-2.0.5/i686-w64-mingw32/lib" />
+					<Add directory="C:/SDL/SDL2_mixer-2.0.4/i686-w64-mingw32/lib" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/UI bebe" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="bebe_1_gnu_gcc_compiler" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add directory="C:/SDL/SDL2-2.0.10/i686-w64-mingw32/include" />
+					<Add directory="C:/SDL/SDL2_ttf-2.0.15/i686-w64-mingw32/include" />
+					<Add directory="C:/boost_1_74_0/boost_1_74_0" />
+					<Add directory="C:/SDL/SDL2-2.0.10/i686-w64-mingw32/include/SDL2" />
+					<Add directory="C:/SDL/SDL_image-devel-2.0.5-mingw/SDL2_image-2.0.5/i686-w64-mingw32/include" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add option="-lmingw32 -lSDL2main -lSDL2 -lSDL2_ttf -lSDL2_image" />
+					<Add option="-lboost_filesystem -lboost_regex -lboost_system" />
+					<Add directory="C:/SDL/SDL2-2.0.10/i686-w64-mingw32/lib" />
+					<Add directory="C:/SDL/SDL2_ttf-2.0.15/i686-w64-mingw32/lib" />
+					<Add directory="C:/Users/USER/Documents/BOOST LIBS" />
+					<Add directory="C:/SDL/SDL_image-devel-2.0.5-mingw/SDL2_image-2.0.5/i686-w64-mingw32/lib" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add directory="C:/SDL/SDL2-2.0.10/i686-w64-mingw32/include" />
+			<Add directory="C:/SDL/SDL2_ttf-2.0.15/i686-w64-mingw32/include" />
+			<Add directory="C:/boost_1_74_0/boost_1_74_0" />
+			<Add directory="C:/SDL/SDL2-2.0.10/i686-w64-mingw32/include/SDL2" />
+			<Add directory="C:/SDL/SDL_image-devel-2.0.5-mingw/SDL2_image-2.0.5/i686-w64-mingw32/include" />
+		</Compiler>
+		<Linker>
+			<Add option="-lmingw32 -lSDL2main -lSDL2 -lSDL2_ttf -lSDL2_image" />
+			<Add option="-lboost_filesystem -lboost_regex -lboost_system" />
+			<Add directory="C:/SDL/SDL2-2.0.10/i686-w64-mingw32/lib" />
+			<Add directory="C:/SDL/SDL2_ttf-2.0.15/i686-w64-mingw32/lib" />
+			<Add directory="C:/Users/USER/Documents/BOOST LIBS" />
+			<Add directory="C:/SDL/SDL_image-devel-2.0.5-mingw/SDL2_image-2.0.5/i686-w64-mingw32/lib" />
+		</Linker>
+		<Unit filename="include/Administrator.h" />
+		<Unit filename="include/Animation.h" />
+		<Unit filename="include/Event.h" />
+		<Unit filename="include/File.h" />
+		<Unit filename="include/Math.h" />
+		<Unit filename="include/Renderer.h" />
+		<Unit filename="include/Shapes.h" />
+		<Unit filename="include/SurfaceHandler.h" />
+		<Unit filename="include/Theme.h" />
+		<Unit filename="include/UI.h" />
+		<Unit filename="include/button.h" />
+		<Unit filename="include/common.h" />
+		<Unit filename="include/component.h" />
+		<Unit filename="include/f_time.h" />
+		<Unit filename="include/parser.h" />
+		<Unit filename="include/text_input.h" />
+		<Unit filename="include/trigger.h" />
+		<Unit filename="include/view.h" />
+		<Unit filename="include/wrapper.h" />
+		<Unit filename="main.cpp" />
+		<Unit filename="src/instantiate.cpp" />
+		<Unit filename="src/text_input.cpp" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
