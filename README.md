@@ -2,10 +2,7 @@
 ## An SDL2 based application tools Contains tools that enable faster, dynamic application creation
 Some tools includes:
 
-color piker
-text_input
-view backgroud (enabling panning and zooming)
-file_dialog
+color piker, text_input , view(enabling panning and zooming), file_dialog
 
 project still under developement, so most features are not yet available
 
