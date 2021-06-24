@@ -327,17 +327,17 @@ namespace be
                 if(pointer == char_stack.end()  && pointer == char_stack.begin() && (--char_stack.end())->width < text_box.w)
                     text_header = 0;
 
-                else if(delete_type == DELETE_TYPE::FRONT && text_header + text_box.w > (--char_stack.end())->width)
-                    text_header -= ((text_header + text_box.w) - (--char_stack.end())->width);
-
-                else if(delete_type == DELETE_TYPE::BACK)
-                    text_header -= char_width;
-
                 else if(pointer->width > text_header + text_box.w)
                     text_header = pointer->width - text_box.w;
 
                 else if(pointer->width < text_header)
                     text_header = pointer->width;
+
+                else if(delete_type == DELETE_TYPE::FRONT && text_header + text_box.w > (--char_stack.end())->width)
+                    text_header -= ((text_header + text_box.w) - (--char_stack.end())->width);
+
+                else if(delete_type == DELETE_TYPE::BACK)
+                    text_header -= char_width;
 
 
                 // make sure text header is never less than zero

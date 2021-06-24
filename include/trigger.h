@@ -12,12 +12,13 @@ namespace be
     public:
         enum class STYLE { button, link , icon , dialog_icon };
         enum class STATE { click, held, release, none};
-
+    private:
         /** \brief
          *  STATE -> state of the button { click , held or release }
          *  uint32_t -> length of time the button has been held
+         *  \ width and heights is for image in case
          */
-        std::function<void( STATE&, unsigned int )> callback = NULL;
+        std::function<void( STATE& , unsigned int )> callback = NULL;
 
         image_renderer* IR;
         text_renderer* TR;
@@ -27,7 +28,7 @@ namespace be
 
     public:
 
-        trigger(be::view* view, std::string uuid, int x = 0, int y = 0, int w = 0, int h = 0, std::string text = "",const theme::IMG_NODE* img = nullptr ,std::function<void( STATE&, unsigned int )> callback = NULL, STYLE style = STYLE::button)
+        trigger(be::view* view, std::string uuid, std::string text = "",const theme::IMG_NODE* img = nullptr ,  int x = 0, int y = 0, std::function<void( STATE&, unsigned int )> callback = NULL, STYLE style = STYLE::button, int w = 20, int h = 20)
         :component(view,uuid,x,y,w,h), callback(callback), style(style)
         {
             TR = new text_renderer(view,text);
@@ -79,7 +80,11 @@ namespace be
 
         void Render(SDL_Rect* clip_boarder) override
         {
-
+            if(is_active)
+            {
+                IR->Render(clip_boarder);
+                TR->Render(clip_boarder);
+            }
         }
 
         const STATE& get_state()

@@ -3,6 +3,7 @@
 
 
 #include "common.h"
+#include "Shapes.h"
 #include "Event.h"
 
 namespace be
@@ -22,7 +23,7 @@ namespace be
     };
 
     /** \brief gives a high level abstraction on view controls like panning and zooming
-     *
+     *  \ DYNAMIC-> this means that the target texture resizes it self to the minimum size required to render a texture
      *  \note view does not call SDL_RenderPresent so this should be called manually
      */
     class view
@@ -40,7 +41,7 @@ namespace be
         static vec2d max_texture_size;
         // tell the largest width or height of texture copied
         vec2d max_copied_size;
-        // holds initial values assigned by use in case of mode change
+        // holds initial values assigned by user in case of mode change
         vec2d assigned_display_size;
         vec2d assigned_texture_size;
 

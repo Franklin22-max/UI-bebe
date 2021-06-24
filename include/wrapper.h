@@ -32,6 +32,12 @@ namespace be
             plane_size = {0,0};
         }
 
+
+        ~wrapper()
+        {
+
+        }
+
         /** \brief
          * \return a constant pointer to inputed component or null pointer on failure
          * \note use make component to add component, the component must only exist in wrapper to avoid conflict

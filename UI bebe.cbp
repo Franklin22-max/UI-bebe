@@ -90,6 +90,7 @@
 		<Unit filename="include/parser.h" />
 		<Unit filename="include/text_input.h" />
 		<Unit filename="include/trigger.h" />
+		<Unit filename="include/value_adjuster.h" />
 		<Unit filename="include/view.h" />
 		<Unit filename="include/wrapper.h" />
 		<Unit filename="main.cpp" />

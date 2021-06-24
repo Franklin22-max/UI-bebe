@@ -6,16 +6,6 @@
 
 namespace be
 {
-    inline bool operator==(const SDL_Color& a, const SDL_Color& b)
-    {
-        return (a.r == b.r && a.g == b.g && a.b == b.b && a.a == b.a)? true : false;
-    }
-
-    inline bool operator!=(const SDL_Color& a, const SDL_Color& b)
-    {
-        return !(a == b);
-    }
-
     class Renderder
     {
     protected:

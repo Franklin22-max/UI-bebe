@@ -29,6 +29,7 @@ namespace be
         SDL_Renderer* renderer = nullptr;
         DEFAULT_FONT default_font;
         static theme* instance;
+        bool has_defualt_font_changed = false;
     public:
         static theme* get_instance(){ return instance = (instance == nullptr)? new theme() : instance; };
 
@@ -44,6 +45,14 @@ namespace be
         void INIT(SDL_Renderer* renderer)
         {
             this->renderer = renderer;
+        }
+
+        // Note: order of adding colors indicates importance
+        // index (0 -> primary background color, 1 -> primary foreground color, 2 -> secondary background color,  3 -> secondary background color and so on).
+        const SDL_Color* add_color(const SDL_Color cl)
+        {
+            colors.push_back(cl);
+            return &(colors[colors.size() - 1]);
         }
 
         const IMG_NODE* Load_image(std::string uuid, std::string path, std::string* err = NULL)
@@ -171,6 +180,7 @@ namespace be
             {
                 default_font.node = f_node;
                 default_font.font_name = font_name;
+                has_defualt_font_changed = true;
                 return true;
             }
             else return false;
@@ -232,6 +242,15 @@ namespace be
                 }
             }
             return nullptr;
+        }
+
+
+
+
+
+        void remove_color(int index)
+        {
+
         }
 
 
