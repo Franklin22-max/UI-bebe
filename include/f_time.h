@@ -62,7 +62,7 @@ namespace be
             return delta_time;
         }
 
-        frame_sync()
+        void frame_sync()
         {
             // get time from system
             HRC_time_point _ctime = std::chrono::high_resolution_clock::now();

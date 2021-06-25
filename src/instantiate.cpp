@@ -12,4 +12,5 @@ namespace be
 
     theme* theme::instance = nullptr;
 
+    tsqueue<std::string> Error::error_messages;
 }

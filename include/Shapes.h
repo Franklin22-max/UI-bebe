@@ -16,7 +16,7 @@ namespace be
         virtual double Area() = 0;
         virtual double Perimeter() = 0;
         virtual double get(std::string key) = 0;
-        virtual double set(std::string key, double value) = 0;
+        virtual void set(std::string key, double value) = 0;
     };
 
 
@@ -47,7 +47,7 @@ namespace be
                 return radius;
         }
 
-        double set(std::string key, double value)
+        void set(std::string key, double value)
         {
             if(key == "x")
                 x = value;
@@ -120,7 +120,7 @@ namespace be
                 return length;
         }
 
-        double set(std::string key, double value)
+        void set(std::string key, double value)
         {
             if(key == "x")
                 x = value;

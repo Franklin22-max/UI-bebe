@@ -13,10 +13,10 @@ namespace be
         view* view;
         std::string id;
         bool is_active;
-        bool on_hover;
+        bool in_focus;
     public:
         component(be::view* view,std::string id,int x,int y, int w, int h)
-        :pos({x,y}),size({w,h}), id(id), is_active(false), on_hover(false)
+        :pos({x,y}),size({w,h}), id(id), is_active(false), in_focus(false)
         {
             this->view = view;
         }

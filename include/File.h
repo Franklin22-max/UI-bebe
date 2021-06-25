@@ -26,7 +26,7 @@ namespace be
             boost::filesystem::fstream::pos_type pos;
         };
 
-        int current_line;
+        unsigned int current_line;
         boost::filesystem::fstream::pos_type end_pos = 0;// stores the next position to be read by fstream file
         boost::filesystem::path path;
         boost::filesystem::fstream file;
@@ -55,14 +55,13 @@ namespace be
                 return 0;
         }
 
-        // return 0 if successful and -1 otherwise
+
         std::string read_next_line()
         {
             std::string dest = "";
             if(current_line < lines.size() && current_line > 0)// line has been loaded before
             {
                 std::getline(file,dest);
-                current_line;
                 goto_line(current_line + 1);
             }
             else if(file.is_open() && file.peek() != EOF)
@@ -92,7 +91,7 @@ namespace be
             if(line > lines.size())
             {
                 goto_end();
-                for(int i=0; i < line - lines.size(); i++)
+                for(unsigned int i=0; i < line - lines.size(); i++)
                     read_next_line();
             }
             else if(lines.size() > 0 && line > 0 && line <= lines.size())

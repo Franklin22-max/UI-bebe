@@ -109,7 +109,7 @@ namespace be
                     SDL_SetRenderTarget(renderer,NULL);
 
                 }
-                else std::cerr<<"View Texture Error: "<<SDL_GetError()<<"\n";
+                else be::Error::write_error("View Texture Error: " + std::string(SDL_GetError()));
             }
             else
             {
@@ -339,7 +339,6 @@ namespace be
 
         void RenderDrawRect(SDL_Rect* clip_border,SDL_Rect* src,SDL_Color cl,SDL_BlendMode bl = SDL_BLENDMODE_NONE)
         {
-            SDL_Rect empty = {0,0,0,0};
             SDL_Rect ts = {0,0,texture_size.w,texture_size.h};
             SDL_Rect c = (clip_border == NULL)? ts : *clip_border;
             SDL_Rect r = get_intersection_rect(*src, c);

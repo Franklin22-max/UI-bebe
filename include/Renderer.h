@@ -1,6 +1,7 @@
 #ifndef RENDERER_H_INCLUDED
 #define RENDERER_H_INCLUDED
 
+#include "Error.h"
 #include "view.h"
 #include "Theme.h"
 
@@ -80,9 +81,9 @@ namespace be
                     can_reload = true;
                 }
                 else
-                    std::cout<<"No default Font\n";
+                    be::Error::write_error("No default Font");
             }
-            else std::cout<<"No default Font\n";
+            else be::Error::write_error("No default Font");
         }
 
         bool is_text_active()
@@ -111,7 +112,7 @@ namespace be
                     SDL_Surface* surface = (type == LINEAR)? TTF_RenderText_Blended(font->font,text.c_str(),color)  :   TTF_RenderText_Blended_Wrapped(font->font,text.c_str(),color,wrapper_length);
                     if(!surface)
                     {
-                        std::cerr<<"LOADTEXT SURFACE: "<<SDL_GetError()<<"\n";
+                        be::Error::write_error("LOADTEXT SURFACE: " + std::string(SDL_GetError()));
                         size = {0,0};
                         return size;
                     }
@@ -123,7 +124,7 @@ namespace be
                         texture = SDL_CreateTextureFromSurface(renderer,surface);
                         if(!texture)
                         {
-                            std::cerr<<"LOADTEXT TEXTURE: "<<SDL_GetError()<<"\n";
+                            be::Error::write_error("LOADTEXT TEXTURE: " + std::string(SDL_GetError()));
                             texture = nullptr;          size = {0,0};
                         }
                         else
@@ -177,7 +178,7 @@ namespace be
                 return size.w;
             else if(key == "h")
                 return size.h;
-            else if(key == "font size" || key == "font_size" && font)
+            else if((key == "font size") || (key == "font_size") && (font))
                 return font->font_size;
             else return -1;
         }
@@ -194,7 +195,7 @@ namespace be
             }
         }
 
-        void set_type(TYPE type, uint16_t length = NULL)
+        void set_type(TYPE type, uint16_t length = 0)
         {
             wrapper_length = (length > 0)? length : wrapper_length;
             this->type = type;
@@ -238,7 +239,7 @@ namespace be
             // load image
             if(!img_node)
             {
-                std::cerr<<"LOAD_IMG TEXTURE: "<<SDL_GetError()<<"\n";
+                be::Error::write_error("LOAD_IMG TEXTURE: " + std::string(SDL_GetError()));
                 return {0,0};
             }
             else

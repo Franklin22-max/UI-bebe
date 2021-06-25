@@ -20,6 +20,10 @@
 #include <initializer_list>
 
 
+#include "Error.h"
+#include "random_vector.h"
+
+
 namespace be
 {
     union vec2d
@@ -118,6 +122,18 @@ namespace be
     inline bool operator!=(const SDL_Color& a, const SDL_Color& b)
     {
         return !(a == b);
+    }
+
+
+
+    inline SDL_Color int_to_color(uint32_t num)
+    {
+        SDL_Color cl;
+        cl.a = (uint8_t)(num >> 24);
+        cl.b = (uint8_t)(num >> 16) & 255;
+        cl.g = (uint8_t)(num >> 8) & 255;
+        cl.r = (uint8_t)(num & 255);
+        return cl;
     }
 
 }

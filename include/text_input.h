@@ -22,7 +22,7 @@ namespace be
         enum class TIMER_STAGE   { TRIGGERD, DELAY, COUNT, NONE}       timer_stage = TIMER_STAGE::NONE;
 
         vec2d mouse;
-        bool in_focus;
+        bool on_hover;
 
         std::string text;
         std::string visible_text;
@@ -89,8 +89,7 @@ namespace be
 
                 if(on_hover == true && Administrator::get_instance()->get_key_state(this->view,"mouse_left") == Event::key_state::click)
                     in_focus = true;
-
-                else if(on_hover != true && Administrator::get_instance()->get_key_state(this->view,"mouse_left") == Event::key_state::click)
+                else if (Administrator::get_instance()->get_active_view() != view   ||  (on_hover != true && Administrator::get_instance()->get_key_state(this->view,"mouse_left") == Event::key_state::click))
                     in_focus = false;
 
                 // shift pointer

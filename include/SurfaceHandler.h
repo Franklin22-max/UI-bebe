@@ -18,6 +18,57 @@ namespace be
     }
 
 
+
+    inline SDL_Surface* LOAD_IMAGE(const std::string path)
+    {
+        SDL_Surface* s = IMG_Load(path.c_str());
+        if(s)
+        {
+            SDL_Surface* img = SDL_ConvertSurfaceFormat(s,SDL_PIXELFORMAT_RGBA8888,0);
+            SDL_FreeSurface(s);
+            return img;
+        }
+        else return NULL;
+    }
+
+    /** \brief  trim the edges of surface and make it roundish
+     *
+     * \param  the source
+     * \param  how deep trimming should be , should be b/w (0 - 100)
+     * \ return a trimmed surface or null on failure
+     * \ note  should manually free returned surface
+     */
+    inline SDL_Surface* make_round_edges(SDL_Surface* src, float percentage)
+    {
+        int x,y;
+        x = src->w/2;
+        y = src->h/2;
+        float r = sqrt(x*x + y*y)  * (percentage / 100);
+        int d = r*2;
+
+        SDL_Surface* dest = SDL_CreateRGBSurfaceWithFormat(0, std::min(d,src->w), std::min(d,src->h), 0,SDL_PIXELFORMAT_RGBA8888);
+
+        int __h = (src->h - std::min(d,src->h))/2.f;
+        int __w = (src->w - std::min(d,src->w))/2.f;
+
+        if(dest)
+        {
+            uint32_t* dest_ptr = (uint32_t*)dest->pixels;
+            uint32_t* src_ptr = (uint32_t*)src->pixels;
+
+            for(int i = 0; i < src->h; i++) // y - axis
+            {
+                for(int j = 0; j < src->w; j++)// x - axis
+                {
+                    if(sqrt((i - y)*(i - y)  + (j - x)*(j - x)) < r )
+                        dest_ptr[(i - __h) * dest->w + (j - __w)] = src_ptr[i * src->w + j];
+                }
+            }
+        }
+        return dest;
+    }
+
+
     inline void fill_circle(int x, int y, int r,  SDL_Surface* __surface, SDL_Color color)
     {
         if( x + r > 0 && x - r < __surface->w && r > 0 && y + r > 0 && y - r < __surface->h)

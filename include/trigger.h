@@ -56,16 +56,16 @@ namespace be
             if(is_active)
             {
                 mouse = view->resolve_point(mouse);
-                on_hover = (mouse.x >= pos.x && mouse.x <= pos.x + size.w && mouse.y >= pos.y && mouse.y <= pos.y + size.h);
+                in_focus = (mouse.x >= pos.x && mouse.x <= pos.x + size.w && mouse.y >= pos.y && mouse.y <= pos.y + size.h);
 
-                if(on_hover && Administrator::get_instance()->get_key_state(view,"mouse left") == Event::key_state::click)
+                if(in_focus && Administrator::get_instance()->get_key_state(view,"mouse left") == Event::key_state::click)
                 {
                     state = STATE::click;
                     held_start = SDL_GetTicks();
                 }
-                else if(on_hover && Administrator::get_instance()->get_key_state(view,"mouse left") == Event::key_state::held)
+                else if(in_focus && Administrator::get_instance()->get_key_state(view,"mouse left") == Event::key_state::held)
                     state = STATE::held;
-                else if(on_hover && Administrator::get_instance()->get_key_state(view,"mouse left") == Event::key_state::released)
+                else if(in_focus && Administrator::get_instance()->get_key_state(view,"mouse left") == Event::key_state::released)
                     state = STATE::release;
                 else
                     state = STATE::none;

@@ -59,6 +59,7 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add option="-Wnarrowing" />
 			<Add directory="C:/SDL/SDL2-2.0.10/i686-w64-mingw32/include" />
 			<Add directory="C:/SDL/SDL2_ttf-2.0.15/i686-w64-mingw32/include" />
 			<Add directory="C:/boost_1_74_0/boost_1_74_0" />
@@ -75,6 +76,7 @@
 		</Linker>
 		<Unit filename="include/Administrator.h" />
 		<Unit filename="include/Animation.h" />
+		<Unit filename="include/Error.h" />
 		<Unit filename="include/Event.h" />
 		<Unit filename="include/File.h" />
 		<Unit filename="include/Math.h" />
@@ -88,14 +90,15 @@
 		<Unit filename="include/component.h" />
 		<Unit filename="include/f_time.h" />
 		<Unit filename="include/parser.h" />
+		<Unit filename="include/random_vector.h" />
 		<Unit filename="include/text_input.h" />
 		<Unit filename="include/trigger.h" />
+		<Unit filename="include/tsqueue.h" />
 		<Unit filename="include/value_adjuster.h" />
 		<Unit filename="include/view.h" />
 		<Unit filename="include/wrapper.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="src/instantiate.cpp" />
-		<Unit filename="src/text_input.cpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

@@ -245,14 +245,17 @@ namespace be
         }
 
 
-
-
-
-        void remove_color(int index)
+        SDL_Color get_color(unsigned int index)
         {
+            if(index < colors.size())
+                return colors[index];
+            else if(colors.size() >= 2)
+                return colors[index % 2];// force it to return primary
+
+            Error::exception e("invalid index");
+            throw e;
 
         }
-
 
 
         void remove_image(const std::string id)

@@ -3,90 +3,108 @@
 
 #include "view.h"
 #include "Event.h"
+#include "Error.h"
 #include <SDL_syswm.h>
 #include <algorithm>
 
 namespace be
 {
-
-    enum VIEW_PLACEMENT {ALWAYS_ON_TOP, ANY_POSITION };
-
     class Administrator
     {
+    public:
+        enum VIEW_PLACEMENT {ALWAYS_ON_TOP, ANY_POSITION, ALWAYS_ON_TOP_AND_GRAB_EVENT };
+
         Administrator() { event = Event::get_instance(); };
         Administrator(const Administrator&) = delete;
 
-        // holds info about the z index of are view object
-        struct VZI
-        {
-            VIEW_PLACEMENT p;
-            view* view;
-            uint16_t index;
-        };
-
         SDL_Window* window;
         Event* event;
-        VZI* active_view = NULL;
-        std::vector<VZI> views;
+        // the view with the event
+        be::view* active_view = NULL;
+        // view which alway appears on top and grab event
+        be::random_vector<be::view*> alpha_views;
+        // view which alway appears on top but does not grab event
+        be::random_vector<be::view*> beta_views;
+        // view which occupies any position
+        be::random_vector<be::view*> omega_views;
+        // components that requires text inputs
         std::map<std::string,bool> text_components;
 
 
-        VZI* find(be::view* view)
-        {
-            if(views.size() > 0)
-            {
-                for(auto &i: views)
-                {
-                    if(i.view == view)
-                    {
-                        return &i;
-                        break;
-                    }
-                }
-            }
-            return nullptr;
-        }
-
-        bool is_view_infocus(view* v)
+        bool isViewInFocus(view* v)
         {
             vec2d mouse = event->get_mouse_pos();
             return (mouse.x >= v->display.x && mouse.y >= v->display.y && mouse.x <= v->display.x+v->display.w && mouse.y <= v->display.y+v->display.h);
         }
 
 
-        void resolve_index(int index)
+
+        void rearrange_views(be::random_vector<be::view*>& store ,int i)
         {
-            for(int i = views.size()-1; i >= 0; i--)
+            be::view* hold =  store[i];
+            // remove the element from it position and place it at the back
+            for(; i != store.size(); i++)
             {
-                if(i > index)
-                    views[i].index -= 1;
-                else if(i == index)
+                if(i + 1 < store.size())
                 {
-                    views[i].index = views.size()-1;
-                    std::sort(views.begin(), views.end(),[](VZI& f,VZI& s){ return (f.index < s.index); });
-                    active_view = &views[views.size()-1];
-                    break;
+                    store[i] = store[i + 1];// relocate elements to fill the position of our current view
                 }
+                else if(store[i] != hold   &&  i == store.size() - 1)
+                    store[i] = hold; // now place it at the very end
             }
         }
+
+        /** \brief
+         *
+         * \param  vector to search
+         * \param  view ptr to be found
+         * \return returns an iterator to the view and end() of container if not found
+         *
+         */
+
+        be::random_vector<be::view*>::iterator find(be::random_vector<be::view*>& store, be::view* view)
+        {
+            for(auto i = store.begin(); i != store.end(); ++i)
+            {
+                if(*i  == view) return i;
+            }
+
+            return store.end();
+        }
+
+
+
 
         static Administrator* instance;
     public:
         static Administrator* get_instance(){ return instance = (instance != nullptr)? instance : new Administrator;};
 
-        void Destroy()
+
+        const be::view* get_active_view()
         {
-            for(auto &i : views)
-                delete i.view;
-            views.erase(views.begin(), views.end());
+            return active_view;
         }
 
-
-        void SET_WINDOW(SDL_Window* window)
+        void INIT(SDL_Window* window)
         {
             this->window = window;
         }
 
+
+        void Destroy()
+        {
+            for(auto &i : alpha_views)
+                delete i;
+            alpha_views.erase(alpha_views.begin(), alpha_views.end());
+
+            for(auto &i : beta_views)
+                delete i;
+            beta_views.erase(beta_views.begin(), beta_views.end());
+
+            for(auto &i : omega_views)
+                delete i;
+            omega_views.erase(omega_views.begin(), omega_views.end());
+        }
 
         HWND Get_Window_handler()
         {
@@ -103,28 +121,29 @@ namespace be
 
             if(__view)
             {
-                VZI vi;
-                vi.p = placement;
-                vi.view = __view;
-
-                if(views.size() > 0 && vi.p != ALWAYS_ON_TOP)
+                if(placement == ALWAYS_ON_TOP_AND_GRAB_EVENT)
                 {
-                    for(auto &i: views)
-                    {
-                        if(i.p == ALWAYS_ON_TOP)
-                            i.index += 1;
-                        else
-                        {
-                            vi.index = i.index + 1;
-                            break;
-                        }
-                    }
+                    alpha_views.push_back(__view);
+                    __view = alpha_views[alpha_views.size() - 1];
+                    active_view = __view;
                 }
-                else vi.index = views.size();
+                else if(placement == ALWAYS_ON_TOP)
+                {
+                    beta_views.push_back(__view);
+                    __view = beta_views[beta_views.size() - 1];
 
-                views.push_back(vi);
-                // sort views in other of focus
-                std::sort(views.begin(), views.end(),[](VZI& f,VZI& s){ return (f.index < s.index); });
+                    if(alpha_views.size() == 0)
+                        active_view = __view;
+                }
+                else
+                {
+                    omega_views.push_back(__view);
+                    __view = omega_views[omega_views.size() - 1];
+
+                    if(alpha_views.size() == 0)
+                        active_view = __view;
+                }
+
                 return __view;
             }
             return nullptr;
@@ -135,21 +154,48 @@ namespace be
         {
             (*event)();
 
-            if(event->mouse_left.get_state() == Event::key_state::click || event->mouse_right.get_state() == Event::key_state::click)
+            if(event->mouse_left.get_state() == Event::key_state::click)
             {
-                for(int i = views.size()-1; i >= 0; i--)
+                if(alpha_views.size() > 0)
                 {
-                    if(is_view_infocus(views[i].view) && i != views.size()-1 && views[i].p != ALWAYS_ON_TOP)
+                    active_view = alpha_views[alpha_views.size() - 1];
+                }
+                else
+                {
+                    bool skip_omega = false;
+
+                    for(int i = beta_views.size() - 1; i >= 0; i--)
                     {
-                        resolve_index(i);
-                        break;
+                        if(isViewInFocus(beta_views[i]))
+                        {
+                            if(i == beta_views.size() - 1)// if its already the last one
+                                active_view = beta_views[i];
+                            else
+                            {   // place it at the end
+                                rearrange_views(beta_views, i );
+                                active_view = beta_views[beta_views.size() - 1];
+                            }
+                            skip_omega = true;
+                            break;
+                        }
                     }
-                    else if(is_view_infocus(views[i].view) && (i == views.size()-1 || views[i].p == ALWAYS_ON_TOP))
-                        break;
-                    else if(views[i].p == ALWAYS_ON_TOP && (i != views.size()-1))
+
+                    if(!skip_omega)
                     {
-                        resolve_index(i);
-                        break;
+                        for(int i = omega_views.size() - 1; i >= 0; i--)
+                        {
+                            if(isViewInFocus(omega_views[i]))
+                            {
+                                if(i == omega_views.size() - 1)// if its already the last one
+                                    active_view = omega_views[i];
+                                else
+                                {   // place it at the end
+                                    rearrange_views(omega_views,  i);
+                                    active_view = omega_views[omega_views.size() - 1];
+                                }
+                                break;
+                            }
+                        }
                     }
                 }
             }
@@ -158,8 +204,71 @@ namespace be
 
         void RENDER_PRESENT()
         {
-            for(auto v : views)
-                v.view->RenderPresent();
+            for(auto &v : omega_views)
+                v->RenderPresent();
+
+            for(auto &v : beta_views)
+                v->RenderPresent();
+
+            for(auto &v : alpha_views)
+                v->RenderPresent();
+        }
+
+
+        void REMOVE_VIEW(be::view* view)
+        {
+            auto it = find(alpha_views, view);
+            if(it != alpha_views.end())
+            {
+                if(*it == active_view)
+                {
+                    if(alpha_views.size() > 1)
+                        active_view = *(--it);
+                    else if(!beta_views.empty()  || !omega_views.empty())
+                        active_view = (!beta_views.empty())? *(--beta_views.end()) : *(--omega_views.end());
+                    else
+                        active_view = NULL;
+                }
+                auto __v = *it;
+                alpha_views.erase(it);
+                delete __v;
+            }
+            else
+            {
+                it = find(beta_views, view);
+                if(it != beta_views.end())
+                {
+                    if(*it == active_view)
+                    {
+                        if(beta_views.size() > 1)
+                            active_view = *(--it);
+                        else if(!omega_views.empty())
+                            active_view = *(--omega_views.end());
+                        else
+                            active_view = NULL;
+                    }
+                    auto __v = *it;
+                    beta_views.erase(it);
+                    delete __v;
+                }
+                else
+                {
+                    it = find(omega_views, view);
+                    if(it != omega_views.end())
+                    {
+                        if(*it == active_view)
+                        {
+                            if(omega_views.size() > 1)
+                                active_view = *(--it);
+                            else
+                                active_view = NULL;
+                        }
+                        auto __v = *it;
+                        omega_views.erase(it);
+                        delete __v;
+                    }
+                }
+            }
         }
 
 
@@ -174,10 +283,9 @@ namespace be
 
         vec2d get_mouse_pos(view* view)
         {
-            VZI* vi = find(view);
-            if(vi != nullptr)
+            if(view == active_view)
             {
-                if(vi->index  == views.size()-1)
+                if(view == active_view)
                     return event->get_mouse_pos();
                 else
                     return {-1,-1};
@@ -186,8 +294,7 @@ namespace be
 
         Event::key_state get_key_state(view* view,std::string key)
         {
-            VZI* vi = find(view);
-            if(vi->index  == views.size()-1)
+            if(view == active_view)
                 return event->get_key_state(key);
             else
                 return Event::key_state::none;
@@ -195,8 +302,7 @@ namespace be
 
         bool get_modstate(view* view, std::string key_mode_name)
         {
-            VZI* vi = find(view);
-            if(vi->index  == views.size()-1)
+            if(view == active_view)
                 return event->get_modstate(key_mode_name);
             return false;
         }
@@ -205,8 +311,7 @@ namespace be
         {
             if(SDL_IsTextInputActive() == SDL_FALSE)
             {
-                VZI* vi = find(view);
-                if(vi->index  == views.size()-1)
+                if(view == active_view)
                 {
                     text_components[id] = true;
                     event->start_text_input();
@@ -228,16 +333,14 @@ namespace be
 
             if(!skip)
             {
-                VZI* vi = find(view);
-                if(vi->index  == views.size()-1)
+                if(view == active_view)
                     event->stop_text_input();
             }
         }
 
         char* get_inputed_text(view* view)
         {
-            VZI* vi = find(view);
-            if(vi->index  == views.size()-1)
+            if(view == active_view)
                 return event->get_text_char();
             else
                 return nullptr;
@@ -245,8 +348,7 @@ namespace be
 
         bool has_inputed_text(view* view)
         {
-            VZI* vi = find(view);
-            if(vi->index  == views.size()-1)
+            if(view == active_view)
                 return event->has_inputed_text();
             return false;
         }

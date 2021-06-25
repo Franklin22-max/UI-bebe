@@ -97,7 +97,6 @@ namespace be
                             plane_size.h += max_heigth;
 
                     }
-                    //std::cout<<components[i]->get("x")<<" : "<<components[i]->get("y")<<"\n";
                 }
             }
             else if(dir == GROWTH_DIRECTION::HORIZONTALLY)
@@ -138,7 +137,6 @@ namespace be
                             plane_size.w += max_width;
 
                     }
-                    //std::cout<<components[i]->get("x")<<" : "<<components[i]->get("y")<<"\n";
                 }
             }
 
