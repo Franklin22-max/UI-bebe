@@ -30,12 +30,12 @@ namespace be
 
         virtual void Disable() = 0;
         virtual void Enable() = 0;
-        virtual void Logic(vec2d _mouse) = 0;
+        virtual void Logic(const vec2d& _mouse) = 0;
         virtual void Update() = 0;
-        virtual void Render(SDL_Rect* clip_boarder = NULL) = 0;
+        virtual void Render(SDL_Rect* clip_border = NULL) = 0;
 
-        virtual int get(std::string key) = 0;
-        virtual void set(std::string key, int value) = 0;
+        virtual double get(std::string key) = 0;
+        virtual void set(std::string key, double value) = 0;
     };
 
 

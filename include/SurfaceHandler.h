@@ -11,7 +11,7 @@ namespace be
         if(x < __surface->w && y < __surface->h && x >= 0 && y >= 0)
         {
             if(SDL_MUSTLOCK(__surface)){SDL_LockSurface( __surface );}
-            Uint32* pixel = (Uint32*)__surface->pixels;
+            UINT32* pixel = (UINT32*)__surface->pixels;
             pixel[y * __surface->w + x] = SDL_MapRGBA(__surface->format,color.r,color.g,color.b,color.a);
             if(SDL_MUSTLOCK(__surface)){SDL_UnlockSurface( __surface );}
         }

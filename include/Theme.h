@@ -6,8 +6,7 @@
 
 namespace be
 {
-    /** \brief
-     * \note while deleting font theme does not reassign default font
+     /* \note while deleting font theme does not reassign default font
      * \sa   class be::Renderer
      */
     class theme
@@ -18,13 +17,14 @@ namespace be
         struct IMG_NODE{ std::string path; SDL_Texture* img = nullptr; };
         struct MUSIC_NODE{ std::string path; Mix_Music* music; };
         struct DEFAULT_FONT{ FONT_NODE* node = nullptr; std::string font_name; };
+        struct COLOR_NODE{ SDL_Color color; };
     private:
-        struct FONT_STACK{ std::string path; std::vector<FONT_NODE> fonts; };
+        struct FONT_STACK{ std::string path; std::list<FONT_NODE> fonts; };
 
-        std::map<std::string, IMG_NODE> images;
-        std::map<std::string, FONT_STACK> fonts;
-        std::map<std::string, MUSIC_NODE> musics;
-        std::vector<SDL_Color> colors;
+        std::unordered_map<std::string, IMG_NODE> images;
+        std::unordered_map<std::string, FONT_STACK> fonts;
+        std::unordered_map<std::string, MUSIC_NODE> musics;
+        std::vector<COLOR_NODE> colors;
 
         SDL_Renderer* renderer = nullptr;
         DEFAULT_FONT default_font;
@@ -47,11 +47,14 @@ namespace be
             this->renderer = renderer;
         }
 
-        // Note: order of adding colors indicates importance
-        // index (0 -> primary background color, 1 -> primary foreground color, 2 -> secondary background color,  3 -> secondary background color and so on).
-        const SDL_Color* add_color(const SDL_Color cl)
+        /* \note order of adding colors indicates importance
+         *    index (0 -> primary background color, 1 -> primary foreground color, 2 -> secondary background color,  3 -> secondary background color and so on).
+         */
+        const COLOR_NODE* add_color(const SDL_Color cl)
         {
-            colors.push_back(cl);
+            COLOR_NODE c;
+            c.color = cl;
+            colors.push_back(c);
             return &(colors[colors.size() - 1]);
         }
 
@@ -59,7 +62,7 @@ namespace be
         {
             if(renderer)
             {
-                // free former surface if id already exists
+                // free former texture if id already exists
                 for(auto &i : images)
                 {
                     if(i.first == uuid)
@@ -110,11 +113,11 @@ namespace be
 
                         // if size doesn't exist then add it and return
                         i.second.fonts.push_back(f);
-                        return &(i.second.fonts[i.second.fonts.size() - 1]);
+                        return &(*(--i.second.fonts.end()));
                     }
                 }
 
-                std::vector<FONT_NODE> ft;
+                std::list<FONT_NODE> ft;
                 ft.push_back(f);
 
                 FONT_STACK N;
@@ -125,11 +128,11 @@ namespace be
                 // set font as default if no other font exist
                 if(fonts.size() == 1 && !default_font.node )
                 {
-                    default_font.node = &(fonts[font_name].fonts[0]);
+                    default_font.node = &(*(fonts[font_name].fonts.begin()));
                     default_font.font_name = font_name;
                 }
 
-                return &(fonts[font_name].fonts[ fonts[font_name].fonts.size() - 1]);
+                return &(*(--fonts[font_name].fonts.end()));
             }
             else
             {
@@ -245,16 +248,12 @@ namespace be
         }
 
 
-        SDL_Color get_color(unsigned int index)
+        const COLOR_NODE* get_color(unsigned int index)
         {
             if(index < colors.size())
-                return colors[index];
-            else if(colors.size() >= 2)
-                return colors[index % 2];// force it to return primary
-
-            Error::exception e("invalid index");
-            throw e;
-
+                return &colors[index];
+            else
+                return nullptr;
         }
 
 

@@ -27,7 +27,7 @@ namespace be
         be::random_vector<be::view*> beta_views;
         // view which occupies any position
         be::random_vector<be::view*> omega_views;
-        // components that requires text inputs
+        // components that reqTESTres text inputs
         std::map<std::string,bool> text_components;
 
 

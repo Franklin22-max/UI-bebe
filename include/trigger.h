@@ -10,35 +10,29 @@ namespace be
     class trigger : component
     {
     public:
-        enum class STYLE { button, link , icon , dialog_icon };
         enum class STATE { click, held, release, none};
-    private:
+    protected:
         /** \brief
          *  STATE -> state of the button { click , held or release }
          *  uint32_t -> length of time the button has been held
          *  \ width and heights is for image in case
          */
         std::function<void( STATE& , unsigned int )> callback = NULL;
-
-        image_renderer* IR;
         text_renderer* TR;
         unsigned int held_start = 0;
         STATE state = STATE::none;
-        STYLE style;
 
     public:
 
-        trigger(be::view* view, std::string uuid, std::string text = "",const theme::IMG_NODE* img = nullptr ,  int x = 0, int y = 0, std::function<void( STATE&, unsigned int )> callback = NULL, STYLE style = STYLE::button, int w = 20, int h = 20)
-        :component(view,uuid,x,y,w,h), callback(callback), style(style)
+        trigger(be::view* view, std::string uuid, std::string text, int x = 0, int y = 0,int w =0, int h = 0, std::function<void( STATE&, unsigned int )> callback = NULL)
+        :component(view,uuid,x,y,w,h), callback(callback)
         {
-            TR = new text_renderer(view,text);
-            IR = new image_renderer(view, img);
+            TR = new text_renderer(view,"",14,text);
         }
 
-        ~trigger()
+        virtual ~trigger()
         {
             delete TR;
-            delete IR;
         }
 
         void Disable()
@@ -51,11 +45,11 @@ namespace be
             is_active = true;
         }
 
-        void Logic(vec2d mouse)  override
+        void Logic(const vec2d& _mouse)
         {
             if(is_active)
             {
-                mouse = view->resolve_point(mouse);
+                vec2d mouse = view->resolve_point(_mouse);
                 in_focus = (mouse.x >= pos.x && mouse.x <= pos.x + size.w && mouse.y >= pos.y && mouse.y <= pos.y + size.h);
 
                 if(in_focus && Administrator::get_instance()->get_key_state(view,"mouse left") == Event::key_state::click)
@@ -69,23 +63,17 @@ namespace be
                     state = STATE::release;
                 else
                     state = STATE::none;
+
+                // run callback function if any was give
+                if(callback != NULL && (state == STATE::click || state == STATE::held || state == STATE::release))
+                    callback(state, (state == STATE::held)? SDL_GetTicks() - held_start  :   0 );
             }
         }
 
-        void Update() override
-        {
-            if(callback != NULL && (state == STATE::click || state == STATE::held || state == STATE::release))
-                callback(state, (state == STATE::held)? SDL_GetTicks() - held_start  :   0 );
-        }
+        virtual void Update() = 0;
 
-        void Render(SDL_Rect* clip_boarder) override
-        {
-            if(is_active)
-            {
-                IR->Render(clip_boarder);
-                TR->Render(clip_boarder);
-            }
-        }
+        virtual void Render(SDL_Rect* clip_border) = 0;
+
 
         const STATE& get_state()
         {
@@ -94,7 +82,7 @@ namespace be
 
 
 
-        int get(std::string key) override
+        double get(std::string key) override
         {
             if(key == "x")
                 return pos.x;
@@ -110,7 +98,7 @@ namespace be
 
         }
 
-        void set(std::string key, int value) override
+        void set(std::string key, double value) override
         {
             if(key == "x")
                 pos.x = value;
@@ -123,17 +111,6 @@ namespace be
             else if(key == "font size" || key == "font_size")
                 TR->set("font_size",value);
         }
-
-
-
-        void Design()
-        {
-            if(style == STYLE::button)
-            {
-
-            }
-        }
-
 
 
     };

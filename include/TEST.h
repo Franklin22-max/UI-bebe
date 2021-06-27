@@ -1,5 +1,5 @@
-#ifndef UI_INCLUDE_H
-#define UI_INCLUDE_H
+#ifndef TEST_INCLUDE_H
+#define TEST_INCLUDE_H
 
 
 #include "common.h"
@@ -13,6 +13,7 @@
 #include "SurfaceHandler.h"
 #include "Theme.h"
 #include "trigger.h"
+#include "value_adjuster.h"
 
 #define RENDERER_SYNC           SDL_RENDERER_PRESENTVSYNC
 #define RENDERER_ACCELERATED    SDL_RENDERER_ACCELERATED
@@ -23,7 +24,7 @@
 namespace be
 {
     static int num = 0;
-    class UI
+    class TEST
     {
         SDL_Window* window;
         SDL_Renderer* renderer;
@@ -44,13 +45,15 @@ namespace be
         text_input* text_in;
         text_input* text_in2;
 
+        value_adjustment* va;
+
         SDL_Surface* surf;
         SDL_Texture* texture = NULL;
 
         vec2d former_mouse;
 
     public:
-        std::string INIT(const char* title,int window_w, int window_h, Uint32 renderer_flag)
+        std::string INIT(const char* title,int window_w, int window_h, UINT32 renderer_flag)
         {
             this->window_h = window_h;
             this->window_w = window_w;
@@ -102,6 +105,9 @@ namespace be
             wrp = new wrapper(view1,20,20,200,200,0,1);
             text_in = new text_input(view1,"text input 1",200,300,250);
             text_in2 = new text_input(view3,"text input 2",200,200,250);
+            va = new value_adjustment(view3,"va1",0,194, 200,100);
+
+            va->Enable();
             text_in->Enable();
             text_in2->Enable();
 
@@ -135,14 +141,16 @@ namespace be
             else if(Administrator::get_instance()->get_active_view() == view3)
                 mouse = Administrator::get_instance()->get_mouse_pos(view3);
 
+            be::view* v  = (Administrator::get_instance()->get_active_view() == view1)? view1 : view3;
+
             if(Administrator::get_instance()->get_special_key_state("f5") == Event::key_state::held)
-                view1->zoom_in();
+                v->zoom_in();
             else if(Administrator::get_instance()->get_special_key_state("f6") == Event::key_state::held)
-                view1->zoom_out();
+                v->zoom_out();
             else if(Administrator::get_instance()->get_special_key_state("mouse right") == Event::key_state::held && (former_mouse.x != mouse.x || former_mouse.y != mouse.y))
             {
-                view1->pan_horizontally(former_mouse.x - mouse.x);
-                view1->pan_vertically(former_mouse.y - mouse.y);
+                v->pan_horizontally(former_mouse.x - mouse.x);
+                v->pan_vertically(former_mouse.y - mouse.y);
             }
 
 
@@ -157,6 +165,10 @@ namespace be
             text_in2->Logic(mouse);
             text_in2->Update();
             text_in2->Render();
+
+            va->Logic(mouse);
+            va->Update();
+            va->Render();
 
             if(texture)
                 view1->RenderCopy(texture,NULL);
@@ -191,4 +203,4 @@ namespace be
         }
     };
 }
-#endif // UI_INCLUDE_H
+#endif // TEST_INCLUDE_H

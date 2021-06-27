@@ -14,6 +14,8 @@ namespace be
         }
         INPUT_MODE = Mode::ordinary;
         ///                                     KEY_STATE
+
+        //Note: click appears for only one frame and then turns to held
         enum class key_state
         {
             click, released, held, none
@@ -33,7 +35,7 @@ namespace be
         bool start_text;
         int32_t mouse_x,mouse_y;
         ///                                     KEYS
-        struct btn
+        struct key
         {
             uint32_t held_duration()
             {
@@ -120,8 +122,8 @@ namespace be
         }
 
     private:
-        ///                           LIST EVENT BTN
-        btn
+        ///                           LIST EVENT key
+        key
             mouse_left,mouse_right,left,right,up,down,enter,backspace,home,delete_,end_,pause,tab,esc,greater,less,
             f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,plus,minus,divide,multiply,equals,comma,stop,hash,openParenteces,question,
             semi_colon,quote,colon,ampersand,backslash,forwardslash,openBracket,closeBracket,closeParenteces,space,
@@ -314,7 +316,7 @@ namespace be
 
             INPUT_MODE = Mode::ordinary;
             text_inputed = false;
-            // run event btn
+            // run event keys
             mouse_left(); mouse_right(); left(); right(); up(); down(); enter(); backspace(); home(); delete_(); end_(); pause(); tab(); esc();
             f1(); f2(); f3(); f4(); f5(); f6(); f7(); f8(); f9(); f10(); f11(); f12(); plus(); minus(); divide(); multiply(); comma(); stop(); hash(); openParenteces();
             semi_colon(); quote(); colon(); ampersand(); backslash(); forwardslash(); openBracket(); closeBracket(); closeParenteces(); greater(); question();

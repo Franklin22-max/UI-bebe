@@ -23,7 +23,7 @@ namespace be
     };
 
     /** \brief gives a high level abstraction on view controls like panning and zooming
-     *  \ DYNAMIC-> this means that the target texture resizes it self to the minimum size required to render a texture
+     *  \ DYNAMIC-> this means that the target texture resizes it self to the minimum size reqTESTred to render a texture
      *  \note view does not call SDL_RenderPresent so this should be called manually
      */
     class view
@@ -303,10 +303,10 @@ namespace be
          *
          */
 
-        void RenderDrawPoint(SDL_Rect* clip_boarder,SDL_Point point,SDL_Color cl,SDL_BlendMode bl = SDL_BLENDMODE_NONE)
+        void RenderDrawPoint(SDL_Rect* clip_border,SDL_Point point,SDL_Color cl,SDL_BlendMode bl = SDL_BLENDMODE_NONE)
         {
             SDL_Rect ts = {0,0,texture_size.w,texture_size.h};
-            SDL_Rect c = (clip_boarder == NULL)? ts : *clip_boarder;
+            SDL_Rect c = (clip_border == NULL)? ts : *clip_border;
             if(SDL_PointInRect(&point,&c))
                 __RenderDrawPoint(point.x,point.y, cl,bl);
         }
@@ -319,11 +319,11 @@ namespace be
          *
          */
 
-        void RenderDrawLine(SDL_Rect* clip_boarder, Line line,SDL_Color cl,SDL_BlendMode bl = SDL_BLENDMODE_NONE)
+        void RenderDrawLine(SDL_Rect* clip_border, Line line,SDL_Color cl,SDL_BlendMode bl = SDL_BLENDMODE_NONE)
         {
             Line empty; empty.head = empty.tail = {0,0};
             SDL_Rect ts = {0,0,texture_size.w,texture_size.h};
-            SDL_Rect c = (clip_boarder == NULL)? ts : *clip_boarder;
+            SDL_Rect c = (clip_border == NULL)? ts : *clip_border;
             Line l = get_intersection_line(line,c);
             if(l != empty)
                 __RenderDrawLine(l,cl,bl);
