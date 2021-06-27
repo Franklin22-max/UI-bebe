@@ -16,8 +16,8 @@ namespace be
         vec2d position;
         vec2d size;
     public:
-        virtual int get(std::string key) = 0;
-        virtual void set(std::string key, int value) = 0;
+        virtual double get(std::string key) = 0;
+        virtual void set(std::string key, double value) = 0;
     };
 
     ///                             TEXT RENDERER
@@ -168,7 +168,7 @@ namespace be
             }
         }
 
-        int get(std::string key) override
+        double get(std::string key) override
         {
             if(key == "x")
                 return position.x;
@@ -183,7 +183,7 @@ namespace be
             else return -1;
         }
 
-        void set(std::string key, int value) override
+        void set(std::string key, double value) override
         {
             if(key == "x")
                 position.x = value;
@@ -263,7 +263,7 @@ namespace be
             }
         }
 
-        int get(std::string key) override
+        double get(std::string key) override
         {
             if(key == "x")
                 return position.x;
@@ -276,7 +276,7 @@ namespace be
             else return -1;
         }
 
-        void set(std::string key, int value) override
+        void set(std::string key, double value) override
         {
             if(key == "x")
                 position.x = value;

@@ -83,8 +83,8 @@
 		<Unit filename="include/Renderer.h" />
 		<Unit filename="include/Shapes.h" />
 		<Unit filename="include/SurfaceHandler.h" />
+		<Unit filename="include/TEST.h" />
 		<Unit filename="include/Theme.h" />
-		<Unit filename="include/UI.h" />
 		<Unit filename="include/button.h" />
 		<Unit filename="include/common.h" />
 		<Unit filename="include/component.h" />

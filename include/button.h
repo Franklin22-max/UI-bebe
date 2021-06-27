@@ -1,34 +1,56 @@
 #ifndef BUTTON_H_INCLUDED
 #define BUTTON_H_INCLUDED
 
-#include "component.h"
-#include "Renderer.h"
+#include "trigger.h"
 
 namespace be
 {
-    class button : public component
+    class button : trigger
     {
-        SDL_Color bg;
-        SDL_Color fg;
-        text_renderer* TR;
-        std::string label;
+        SDL_Rect frame;
+        bool draw_frame;
     public:
-        buttton(be::view* view,int x,int y,int w, int h,std::string label,SDL_Color bg,SDL_Color fg)
-        :component(view,x,y,w,h), fg(fg), bg(bg), label(label)
+        button(be::view* view, std::string uuid,std::string text, int x = 0, int y = 0, std::function<void( STATE&, unsigned int )> callback = NULL)
+        :trigger(view,uuid,text,x,y,0,0,callback)
         {
-            TR = new text_renderer(view,label);
+            frame = {x,y,0,0};
         }
 
-        ~button()
+        void Update() override
         {
-            delete TR;
+            if(is_active)
+            {
+                if(in_focus)
+                {
+                    frame.h = TR->get("h");
+                    frame.w = TR->get("w") + TR->get("font_size")*2;
+                    TR->set("x", x+TR->get("font_size"));
+                    TR->set("y", y);
+                    draw_frame = true;
+                }
+                else
+                {
+                    frame.h = frame.w = 0;
+                    draw_frame = false;
+                }
+            }
         }
 
-
-        void Logic(vec2d _mouse) override
+        void Render(SDL_Rect* clip_border = bull)
         {
-            vec2d m = _mouse;
-            on_hover = (m.x >= pos.x && m.y >= pos.y && m.x <= pos.x+size.w && m.y <= pos.y+size.h)? true : false;
+            if(is_active)
+            {
+                TR->Render(clip_border);
+
+                if(draw_frame)
+                {
+                    SDL_Color* cl = theme::get_instance()->get_color(4);
+                    if(cl)
+                        view->RenderDrawRect(clip_border,&frame,*cl,SDL_BLENDMODE_BLEND);
+                    else
+                        view->RenderDrawRect(clip_border,&frame,{0,0,0,255},SDL_BLENDMODE_BLEND);
+                }
+            }
         }
     };
 }

@@ -77,14 +77,14 @@ namespace be
             if(vertices.size() > 0)
                 vertices.erase(std::begin(vertices), std::end(vertices));
 
-            // using a circle as a guide
+            // using a circle as a gTESTde
             double angle = 360 / sides;
-            double raduis = sqrt( apothem() * apothem() + (length/2) * (length/2));
+            double radTESTs = sqrt( apothem() * apothem() + (length/2) * (length/2));
 
             for(int i = 0; i < sides; i++)
             {
-                vertices[i].x = x + cos(deg_to_rad(angle * i)) * raduis;
-                vertices[i].y = y + sin(deg_to_rad(angle * i)) * raduis;
+                vertices[i].x = x + cos(deg_to_rad(angle * i)) * radTESTs;
+                vertices[i].y = y + sin(deg_to_rad(angle * i)) * radTESTs;
             }
         }
 

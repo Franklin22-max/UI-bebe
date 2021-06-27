@@ -42,12 +42,12 @@ namespace be
         int8_t back_offset;
         uint8_t padding;
 
-        std::list<char_info> char_stack;
-        std::list<char_info>::iterator pointer;
-        std::list<char_info>::iterator select_head;
-        std::list<char_info>::iterator select_tail;
-        std::list<char_info>::iterator _select_head;
-        std::list<char_info>::iterator _select_tail;
+        be::random_vector<char_info> char_stack;
+        be::random_vector<char_info>::iterator pointer;
+        be::random_vector<char_info>::iterator select_head;
+        be::random_vector<char_info>::iterator select_tail;
+        be::random_vector<char_info>::iterator _select_head;
+        be::random_vector<char_info>::iterator _select_tail;
 
     public:
         ~text_input()
@@ -79,7 +79,7 @@ namespace be
                 is_active = true;
         }
 
-        void Logic(const vec2d& _mouse) override
+        void Logic(vec2d _mouse) override
         {
             if(is_active)
             {
@@ -153,6 +153,7 @@ namespace be
                             DELETE_SELECTED();
                             select_stage = SELECT_STAGE::NONE;
                         }
+
                         char* __chars = Administrator::get_instance()->get_inputed_text(view);
                         std::string chars(__chars);
                         for(int i = 0; i < chars.length(); i++)
@@ -177,7 +178,7 @@ namespace be
             }
         }
 
-        void Render(SDL_Rect* clip_border = NULL) override
+        void Render(SDL_Rect* clip_boarder = NULL) override
         {
             if(is_active && TR->is_text_active())
             {
@@ -194,14 +195,14 @@ namespace be
                 {
                     vec2d __size = TR->Load_text(visible_text);
                     SDL_Rect view_port = { front_offset, 0, __size.w - (front_offset + back_offset), __size.h};
-                    TR->Render(clip_border, &view_port);
+                    TR->Render(clip_boarder, &view_port);
                 }
 
                 if(select_stage == SELECT_STAGE::HEAD_AND_TAIL)
-                    view->RenderFillRect(clip_border,&select_box,{0, 200,200, 70},SDL_BlendMode::SDL_BLENDMODE_BLEND);
+                    view->RenderFillRect(clip_boarder,&select_box,{0, 200,200, 70},SDL_BlendMode::SDL_BLENDMODE_BLEND);
 
                 if(POINTER_BLINKER())
-                    PTR->Render(clip_border);
+                    PTR->Render(clip_boarder);
             }
         }
 
@@ -263,7 +264,7 @@ namespace be
         }
 
 
-        double get(std::string key) override
+        int get(std::string key) override
         {
             if(key == "x")
                 return pos.x;
@@ -279,7 +280,7 @@ namespace be
 
         }
 
-        void set(std::string key, double value) override
+        void set(std::string key, int value) override
         {
             if(key == "x")
                 pos.x = value;
@@ -302,7 +303,7 @@ namespace be
         }
     private:
 
-        uint16_t current_char_width(std::list<char_info>::iterator pointer)
+        uint16_t current_char_width(be::random_vector<char_info>::iterator pointer)
         {
             if(pointer == char_stack.begin())
                 return pointer->width;
@@ -341,8 +342,8 @@ namespace be
                 // make sure text header is never less than zero
                 if(text_header < 0) text_header = 0;
 
-                std::list<char_info>::iterator head;
-                std::list<char_info>::iterator tail;
+                be::random_vector<char_info>::iterator head;
+                be::random_vector<char_info>::iterator tail;
 
                 front_offset = back_offset = 0;
                 int prev = 0;
@@ -460,8 +461,10 @@ namespace be
             {
                 // get size of char when combined with other chars
                 std::string str1 = "Hello", str2 = std::string("He") + _char + std::string("llo");
+
                 vec2d _1 = TR->Load_text(str1);
                 vec2d _2 = TR->Load_text(str2);
+
                 char_width = _2.w - _1.w;
 
                 if(char_width <= TR->get("font size") && char_width > 0)
@@ -470,7 +473,7 @@ namespace be
                     if(char_stack.size() == 0 || pointer == --char_stack.end())
                     {
                         text += _char;
-                        char_stack.emplace(char_stack.end() , char_stack.size(), (char_stack.size() == 0)? char_width : (--char_stack.end())->width + char_width );
+                        char_stack.emplace(char_stack.end() ,char_stack.size(), (char_stack.size() == 0)? char_width : (--char_stack.end())->width + char_width );
 
                         pointer = --char_stack.end();
                         RESOLVE_VIEW();
