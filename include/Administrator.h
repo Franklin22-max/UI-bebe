@@ -4,6 +4,7 @@
 #include "view.h"
 #include "Event.h"
 #include "Error.h"
+#include "f_time.h"
 #include <SDL_syswm.h>
 #include <algorithm>
 
@@ -27,7 +28,7 @@ namespace be
         be::random_vector<be::view*> beta_views;
         // view which occupies any position
         be::random_vector<be::view*> omega_views;
-        // components that reqTESTres text inputs
+        // components that requires text inputs
         std::map<std::string,bool> text_components;
 
 
@@ -276,20 +277,70 @@ namespace be
          *  All functions below are encapsulations of event calls with a higher level control
          */
 
-        Event::key_state get_special_key_state(std::string key)
+        // OPEN EVENTS WORKS REGARDLESS OF VIEW
+
+        vec2d get_open_mouse_pos(view* view)
+        {
+            return event->get_mouse_pos();
+        }
+
+        Event::key_state get_open_key_state(std::string key)
         {
             return event->get_key_state(key);
         }
 
+
+        bool get_open_modstate(std::string key)
+        {
+            return event->get_modstate(key);
+        }
+
+        void start_open_text_input(view* view,std::string id)
+        {
+            if(SDL_IsTextInputActive() == SDL_FALSE)
+            {
+                text_components[id] = true;
+                event->start_text_input();
+            }
+        }
+
+        void stop_open_text_input(view* view, std::string id)
+        {
+            bool skip = false;
+            text_components[id] = false;
+            for(auto &i : text_components)
+            {
+                if(i.second == true)// ignore stop text input if another component is using it
+                {
+                    skip = true;    break;
+                }
+            }
+
+            if(!skip)
+                event->stop_text_input();
+        }
+
+        char* get_open_inputed_text()
+        {
+            return event->get_text_char();
+        }
+
+        bool has_open_inputed_text(view* view)
+        {
+            return event->has_inputed_text();
+        }
+
+
+
+
+        //  ONLY WORKS ON ACTIVE VIEWS
+
         vec2d get_mouse_pos(view* view)
         {
             if(view == active_view)
-            {
-                if(view == active_view)
-                    return event->get_mouse_pos();
-                else
-                    return {-1,-1};
-            }
+                return event->get_mouse_pos();
+            else
+                return {-1,-1};
         }
 
         Event::key_state get_key_state(view* view,std::string key)
@@ -343,7 +394,7 @@ namespace be
             if(view == active_view)
                 return event->get_text_char();
             else
-                return nullptr;
+                return NULL;
         }
 
         bool has_inputed_text(view* view)

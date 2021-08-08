@@ -520,6 +520,30 @@ namespace be
             zoom();// make sure that view data adjust
         }
 
+        int get(std::string key)
+        {
+            if(key == "x")
+                return display.x;
+            else if(key == "y")
+                return display.y;
+            else if(key == "w")
+                return display.w;
+            else if(key == "h")
+                return display.h;
+        }
+
+        void set(std::string key, int value)
+        {
+            if(key == "x")
+                display.x = value;
+            else if(key == "y")
+                display.y = value;
+            else if(key == "w")
+                resize(value, display.h);
+            else if(key == "h")
+                resize(display.w, value);
+        }
+
     };
 }
 #endif // VIEW_H

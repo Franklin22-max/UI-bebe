@@ -187,9 +187,32 @@ namespace be
      * \sa  is_line_intersecting()
      */
 
-    inline vec2d get_line_intersection_point(const Line& A, const Line& B, const vec2d norm_A, const vec2d norm_B)
+    inline vec2d get_line_intersection_point(Line A,Line B)
     {
+        // swap head and tail of line if y1 is greater than y2
+        if(A.head.y > A.tail.y) std::swap(A.head,A.tail);
+        if(B.head.y > B.tail.y) std::swap(B.head,B.tail);
+        // slopes
+        double Ma = ((A.tail.y - A.head.y)*1.f) / (A.tail.x - A.head.x);
+        double Mb  = ((B.tail.y - B.head.y)*1.f) / (B.tail.x - B.head.x);
 
+        Ma = (Ma >= 0xfffffff)? 0 : Ma;
+        Mb = (Mb >= 0xfffffff)? 0 : Mb;
+
+        // y intercept
+        int Ba = (A.head.y) - (A.head.x*Ma);
+        int Bb =(B.head.y) - (B.head.x*Mb);
+
+        // don't bother calculating if line is parallel
+        if(Ma != Mb)
+        {
+            // find x by equating the equation of y for both of them Ma*Xa+Ba  = Mb*Xb+Bb then solve for X
+            int x = (Bb - Ba) / (Ma - Mb);
+            // find y by equating the equation of x for both of them (Ya-Ba)/Ma  = (Yb-Bb)/Mb then solve for Y
+            int y = (-Mb*Ba + Ma*Bb) / (Ma - Mb);
+            return {x,y};
+        }
+        return { 0xffffff, 0xffffff};
     }
 
 

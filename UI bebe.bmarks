@@ -1,84 +1,98 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <BrowseTracker_layout_file>
 	<ActiveTarget name="Debug" />
-	<File name="include\UI.h" open="1" top="0" tabpos="8">
-		<Cursor position="5301" topLine="129" />
-		<BrowseMarks positions="2470,3261,4361,4503" />
+	<File name="main.cpp" open="1" top="0" tabpos="20">
+		<Cursor position="401" topLine="0" />
+		<BrowseMarks positions="" />
+		<Book_Marks positions="" />
 	</File>
-	<File name="include\text_input.h" open="1" top="1" tabpos="3">
-		<Cursor position="2809" topLine="83" />
-		<BrowseMarks positions="939,1267,1451,2387,9559,17997,19342,1246" />
-		<Book_Marks positions="4679" />
+	<File name="include\button.h" open="0" top="0" tabpos="13">
+		<Cursor position="700" topLine="12" />
+	</File>
+	<File name="include\Theme.h" open="0" top="0" tabpos="10">
+		<Cursor position="4339" topLine="115" />
+		<BrowseMarks positions="2671" />
+	</File>
+	<File name="include\random_vector.h" open="0" top="0" tabpos="15">
+		<Cursor position="2877" topLine="94" />
 	</File>
 	<File name="include\Animation.h" open="0" top="0" tabpos="2">
 		<Cursor position="0" topLine="0" />
 	</File>
-	<File name="include\Administrator.h" open="1" top="0" tabpos="10">
-		<Cursor position="2842" topLine="64" />
+	<File name="include\Administrator.h" open="0" top="0" tabpos="9">
+		<Cursor position="9535" topLine="280" />
 	</File>
 	<File name="include\Error.h" open="1" top="0" tabpos="0">
 		<Cursor position="0" topLine="0" />
 	</File>
-	<File name="include\tsqueue.h" open="1" top="0" tabpos="0">
-		<Cursor position="0" topLine="0" />
-	</File>
-	<File name="include\random_vector.h" open="1" top="0" tabpos="0">
-		<Cursor position="0" topLine="0" />
-	</File>
-	<File name="include\File.h" open="1" top="0" tabpos="6">
-		<Cursor position="6963" topLine="207" />
-	</File>
-	<File name="include\f_time.h" open="1" top="0" tabpos="4">
-		<Cursor position="0" topLine="0" />
-	</File>
-	<File name="include\view.h" open="1" top="0" tabpos="5">
-		<Cursor position="1775" topLine="52" />
-		<BrowseMarks positions="7873,9033,11585,12264" />
-	</File>
-	<File name="include\Math.h" open="1" top="0" tabpos="0">
-		<Cursor position="0" topLine="0" />
-	</File>
-	<File name="include\Event.h" open="1" top="0" tabpos="12">
-		<Cursor position="36086" topLine="0" />
-	</File>
-	<File name="include\component.h" open="1" top="0" tabpos="14">
-		<Cursor position="0" topLine="0" />
+	<File name="include\trigger.h" open="0" top="0" tabpos="4">
+		<Cursor position="1317" topLine="39" />
 	</File>
 	<File name="include\parser.h" open="1" top="0" tabpos="0">
 		<Cursor position="0" topLine="0" />
+		<BrowseMarks positions="" />
+		<Book_Marks positions="" />
 	</File>
-	<File name="include\SurfaceHandler.h" open="1" top="0" tabpos="0">
+	<File name="include\File.h" open="0" top="0" tabpos="16">
+		<Cursor position="4050" topLine="120" />
+	</File>
+	<File name="include\component.h" open="0" top="0" tabpos="12">
+		<Cursor position="862" topLine="20" />
+	</File>
+	<File name="include\value_adjuster.h" open="0" top="0" tabpos="2">
+		<Cursor position="1306" topLine="72" />
+		<Book_Marks positions="1633" />
+	</File>
+	<File name="include\Math.h" open="0" top="0" tabpos="0">
+		<Cursor position="87" topLine="0" />
+	</File>
+	<File name="include\Event.h" open="0" top="0" tabpos="11">
+		<Cursor position="12816" topLine="27" />
+		<BrowseMarks positions="5432" />
+	</File>
+	<File name="include\common.h" open="1" top="0" tabpos="18">
+		<Cursor position="453" topLine="14" />
+		<BrowseMarks positions="" />
+		<Book_Marks positions="" />
+	</File>
+	<File name="include\f_time.h" open="0" top="0" tabpos="14">
+		<Cursor position="1306" topLine="37" />
+	</File>
+	<File name="include\SurfaceHandler.h" open="0" top="0" tabpos="17">
+		<Cursor position="4341" topLine="0" />
+	</File>
+	<File name="include\Renderer.h" open="1" top="0" tabpos="8">
+		<Cursor position="6735" topLine="177" />
+		<BrowseMarks positions="6563,7129,7211,524" />
+		<Book_Marks positions="" />
+	</File>
+	<File name="include\TEST.h" open="1" top="1" tabpos="21">
+		<Cursor position="4182" topLine="97" />
+		<BrowseMarks positions="6440,7052,7081,7281,7490,7576,7680,7750,7870,7920,7487" />
+		<Book_Marks positions="7547" />
+	</File>
+	<File name="include\text_input.h" open="0" top="0" tabpos="5">
+		<Cursor position="25990" topLine="353" />
+		<BrowseMarks positions="939,1210,1259,1419,2379,9560,17936,19282" />
+		<Book_Marks positions="4679" />
+	</File>
+	<File name="src\instantiate.cpp" open="0" top="0" tabpos="6">
+		<Cursor position="25" topLine="0" />
+	</File>
+	<File name="include\view.h" open="1" top="0" tabpos="7">
+		<Cursor position="18208" topLine="519" />
+		<BrowseMarks positions="7812,8975,9022,11539,12244,17635,18563" />
+		<Book_Marks positions="" />
+	</File>
+	<File name="include\tsqueue.h" open="0" top="0" tabpos="1">
 		<Cursor position="0" topLine="0" />
 	</File>
-	<File name="include\Renderer.h" open="1" top="0" tabpos="9">
-		<Cursor position="2601" topLine="61" />
+	<File name="include\Shapes.h" open="1" top="0" tabpos="3">
+		<Cursor position="4421" topLine="139" />
+		<BrowseMarks positions="5254,5377,5436,5529,5690,5714,5760,5886,5897,7871" />
+		<Book_Marks positions="" />
 	</File>
-	<File name="include\Theme.h" open="1" top="0" tabpos="11">
-		<Cursor position="2034" topLine="0" />
-		<BrowseMarks positions="2660" />
-	</File>
-	<File name="include\common.h" open="1" top="0" tabpos="7">
-		<Cursor position="294" topLine="0" />
-	</File>
-	<File name="include\trigger.h" open="1" top="0" tabpos="2">
-		<Cursor position="743" topLine="18" />
-	</File>
-	<File name="include\wrapper.h" open="1" top="0" tabpos="10">
-		<Cursor position="66" topLine="101" />
-	</File>
-	<File name="include\value_adjuster.h" open="1" top="0" tabpos="0">
-		<Cursor position="0" topLine="0" />
-	</File>
-	<File name="include\Shapes.h" open="1" top="0" tabpos="1">
-		<Cursor position="0" topLine="0" />
-	</File>
-	<File name="main.cpp" open="1" top="0" tabpos="13">
-		<Cursor position="345" topLine="0" />
-	</File>
-	<File name="src\instantiate.cpp" open="1" top="0" tabpos="4">
-		<Cursor position="0" topLine="0" />
-	</File>
-	<File name="include\button.h" open="1" top="0" tabpos="1">
-		<Cursor position="0" topLine="7" />
+	<File name="include\wrapper.h" open="0" top="0" tabpos="19">
+		<Cursor position="4016" topLine="105" />
 	</File>
 </BrowseTracker_layout_file>

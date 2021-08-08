@@ -25,6 +25,7 @@ namespace be
     {
     public:
         enum TYPE { WRAPPED, LINEAR} type;
+        friend be::text_renderer* operator<<(be::text_renderer* tr, std::string msg);
     private:
         uint16_t wrapper_length;
         bool can_reload = true;
@@ -211,6 +212,13 @@ namespace be
         }
 
     };
+
+
+    inline be::text_renderer* operator<<(be::text_renderer* tr, std::string msg)
+    {
+        tr->Load_text(tr->text + msg);
+        return tr;
+    }
 
 
 

@@ -137,4 +137,9 @@ namespace be
         return cl;
     }
 
+    inline int color_to_int(SDL_Color cl)
+    {
+
+    }
+
 }

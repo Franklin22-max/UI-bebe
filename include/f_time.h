@@ -88,6 +88,29 @@ namespace be
             start_time = std::chrono::time_point_cast<std::chrono::microseconds>(_time).time_since_epoch().count();
         }
     };
+
+
+    // switches process ON and OFF for specified time periods
+    class Timer
+    {
+        uint32_t prev_time = 0;
+    public:
+        uint16_t interval = 0;
+        Timer(){}
+
+        Timer(uint16_t milisec)
+        : interval(milisec){}
+
+        bool Gate()
+        {
+            if(SDL_GetTicks() - prev_time > interval)
+            {
+                prev_time = SDL_GetTicks();
+                return true;
+            }
+            else return false;
+        }
+    };
 }
 
 #endif // F_TIME_H_INCLUDED

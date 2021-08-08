@@ -126,7 +126,7 @@ namespace be
             }
         }
     }
-
+    //  note very accurate
     inline void fill_triangle(vec2d p1, vec2d p2, vec2d p3,  SDL_Surface* __surface, SDL_Color color)
     {
         double d1 = sqrt((p1.x - p2.x * 1.f)*(p1.x - p2.x * 1.f) + (p1.y - p2.y * 1.f)*(p1.y - p2.y * 1.f));

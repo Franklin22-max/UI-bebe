@@ -6,6 +6,7 @@
 
 int main(int argc, char* argv[])
 {
+
     std::string ec("");
     be::TEST MY_TEST;
     ec = MY_TEST.INIT("TEST TEST",1200,800,RENDERER_ACCELERATED | RENDERER_SYNC);

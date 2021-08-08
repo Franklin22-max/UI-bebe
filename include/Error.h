@@ -11,13 +11,13 @@ namespace be
         // A thread safe queue of error messages
         static tsqueue<std::string> error_messages;
     public:
-
+        // add an error message to queue
         static void write_error(std::string msg)
         {
             if(msg != "")
                 error_messages.push_back(msg);
         }
-
+        // gets the next error from queue and also remove it
         static std::string get_error()
         {
             if(error_messages.size() > 0)

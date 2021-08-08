@@ -7,6 +7,8 @@ namespace be
 {
     class value_adjustment : component
     {
+        enum class Action { changeValue=0, shiftPointer=1, none=2} action= Action::none;
+
         double current_value;
         double max_value;
         double min_value;
@@ -14,7 +16,8 @@ namespace be
         text_renderer* TR;
         bool shift_pointer;
         SDL_Color bg, p_cl;
-        bool can_calculate;
+        bool on_hover;
+        Timer timer;
 
 
         void resolve_current_value()
@@ -23,6 +26,13 @@ namespace be
             current_value = min_value + (((pointer.x - pos.x) * 1.f) / (size.w - pointer.w)) * magnitude;
             TR->Load_text(be::to_string(current_value));
         }
+
+        void resolve_pointer_position()
+        {
+            pointer.x = pos.x + ((current_value - min_value) / (max_value - min_value)) * (size.w - pointer.w);
+            TR->Load_text(be::to_string(current_value));
+        }
+
     public:
 
         void Enable()
@@ -46,13 +56,17 @@ namespace be
             TR = new text_renderer(view,"");
             TR->load_Font( theme::get_instance()->get_default_font()->font_name, 12);
 
-            pointer = {x , y , 6, 10};
+            timer.interval = 50;//ms
+
+            pointer.w = 5;
+            pointer.h = 10;
             pointer.y = pos.y + size.h/3;
+            pointer.x = x + ( w/2 - pointer.w);
 
             resolve_current_value();
 
-            TR->set("x", pos.x+size.w + 2 /*(pos.x + size.w/2.f) - TR->get("w")/2.f*/);
-            TR->set("y",pos.y +  (size.h - TR->get("h"))/2);
+            TR->set("x", (pos.x+size.w) - (TR->get("w") + 2));
+            TR->set("y", pos.y - (TR->get("h") ));
         }
 
         void Logic(const vec2d& _mouse) override
@@ -60,14 +74,46 @@ namespace be
             if(is_active)
             {
                 vec2d mouse = view->resolve_point(_mouse);
-                in_focus = (mouse.x >= pos.x && mouse.x <= pos.x + size.w && mouse.y >= pos.y && mouse.y <= pos.y + size.h);
+
+                on_hover = (mouse.x >= pos.x && mouse.x <= pos.x + size.w && mouse.y >= pos.y && mouse.y <= pos.y + size.h);
+
+                if(on_hover == true && Administrator::get_instance()->get_key_state(this->view,"mouse_left") == Event::key_state::click)
+                    in_focus = true;
+                else if (Administrator::get_instance()->get_active_view() != view   ||  (on_hover != true && Administrator::get_instance()->get_key_state(this->view,"mouse_left") == Event::key_state::click))
+                    in_focus = false;
 
                 if(Administrator::get_instance()->get_key_state(view,"mouse left") == Event::key_state::held && (in_focus || (mouse.x >= pointer.x && mouse.x <= pointer.x + pointer.w && mouse.y >= pointer.y && mouse.y <= pointer.y + pointer.h)))
                 {
                     if(mouse.x >= pos.x && mouse.x <= pos.x + (size.w - pointer.w))
                     {
                         pointer.x = mouse.x;
-                        can_calculate = true;
+                        action = Action::shiftPointer;
+                    }
+                }
+                else if(in_focus && Administrator::get_instance()->get_key_state(view,"left") == Event::key_state::held && timer.Gate())
+                {
+                    if( min_value < max_value && (current_value - 1) >= min_value)
+                    {
+                        current_value -= 1;
+                        action = Action::changeValue;
+                    }
+                    else if(min_value > max_value && (current_value + 1) <= min_value)
+                    {
+                        current_value += 1;
+                        action = Action::changeValue;
+                    }
+                }
+                else if(in_focus && Administrator::get_instance()->get_key_state(view,"right") == Event::key_state::held && timer.Gate())
+                {
+                    if( min_value < max_value && (current_value + 1) <= max_value)
+                    {
+                        current_value += 1;
+                        action = Action::changeValue;
+                    }
+                    else if(min_value > max_value && (current_value - 1) >= max_value)
+                    {
+                        current_value -= 1;
+                        action = Action::changeValue;
                     }
                 }
             }
@@ -77,12 +123,17 @@ namespace be
         {
             if(is_active)
             {
-                if(can_calculate)
+                if(action != Action::none)
                 {
-                    resolve_current_value();
-                    TR->set("x", pos.x+size.w + 2 /*(pos.x + size.w/2.f) - TR->get("w")/2.f*/);
-                    TR->set("y",pos.y +  (size.h - TR->get("h"))/2);
-                    can_calculate = false;
+                    if(action == Action::shiftPointer)
+                        resolve_current_value();
+                    else if(action == Action::changeValue)
+                        resolve_pointer_position();
+
+                    TR->set("x", (pos.x+size.w) - (TR->get("w") + 2));
+                    TR->set("y", pos.y - (TR->get("h")));
+
+                    action = Action::none;
                 }
             }
         }
@@ -91,7 +142,7 @@ namespace be
 
         void Render(SDL_Rect* clip_border = NULL) override
         {
-            SDL_Rect R = {pos.x,pos.y,size.w,size.h};
+            SDL_Rect R = {pos.x,pos.y,size.w,size.h };
             // draw back ground
             view->RenderFillRect(clip_border,&R,bg);
             // draw current

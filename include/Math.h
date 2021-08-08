@@ -2,6 +2,7 @@
 #define MATH_H_INCLUDED
 
 #include <cmath>
+#include <math.h>
 
 namespace be
 {
