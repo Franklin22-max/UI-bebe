@@ -154,7 +154,7 @@ namespace be
         {   // run event via function operator
             (*event)();
             // set active view when mouse left is clicked
-            if(event->mouse_left.get_state() == Event::key_state::click)
+            if(event->mouse_left.get_state() == Event::key_state::click || event->mouse_right.get_state() == Event::key_state::click)
             {
                 if(alpha_views.size() > 0)
                 {

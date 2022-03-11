@@ -77,7 +77,7 @@ namespace be
 
             std::string err;
             theme::get_instance()->INIT(renderer);
-            theme::get_instance()->load_font("consolaz", R"(C:\Users\USER\Documents\CODE BLOCK PROJECT\UI-bebe\fonts\consolaz.ttf)",14,&err);
+            theme::get_instance()->load_font("consolaz", R"(fonts\consolaz.ttf)",14,&err);
             theme::get_instance()->set_default_font("consolaz",14);
 
             // create event object
