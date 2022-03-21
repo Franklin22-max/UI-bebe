@@ -1,6 +1,6 @@
 #ifndef VALUE_ADJUSTER_H_INCLUDED
 #define VALUE_ADJUSTER_H_INCLUDED
-
+/*
 #include "component.h"
 
 namespace be
@@ -51,11 +51,11 @@ namespace be
 
             resolve_current_value();
 
-            TR->set("x", pos.x+size.w + 2 /*(pos.x + size.w/2.f) - TR->get("w")/2.f*/);
+            TR->set("x", pos.x+size.w + 2);
             TR->set("y",pos.y +  (size.h - TR->get("h"))/2);
         }
 
-        void Logic(const vec2d& _mouse) override
+        void Logic(const vec2d _mouse) override
         {
             if(is_active)
             {
@@ -80,7 +80,7 @@ namespace be
                 if(can_calculate)
                 {
                     resolve_current_value();
-                    TR->set("x", pos.x+size.w + 2 /*(pos.x + size.w/2.f) - TR->get("w")/2.f*/);
+                    TR->set("x", pos.x+size.w + 2 );
                     TR->set("y",pos.y +  (size.h - TR->get("h"))/2);
                     can_calculate = false;
                 }
@@ -152,5 +152,5 @@ namespace be
     };
 }
 
-
+*/
 #endif // VALUE_ADJUSTER_H_INCLUDED

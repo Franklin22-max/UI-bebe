@@ -32,6 +32,12 @@ namespace be
             vect.push_back(data);
         }
 
+        void push_front(TYPE data)
+        {
+            this->insert(0, data);
+        }
+
+
         TYPE pop_back()
         {
             TYPE hold = vect[vect.size()-1];
@@ -47,8 +53,11 @@ namespace be
         std::vector<TYPE> subvect(int start, int end)
         {
             std::vector<TYPE> s;
-            for(; start < end; start++)
-                s.push_back(vect[start]);
+            if(start >= 0  && end <= vect.size())
+            {
+                for(; start < end; start++)
+                    s.push_back(vect[start]);
+            }
             return s;
         }
 
@@ -74,18 +83,7 @@ namespace be
 
         void erase(iterator it) noexcept
         {
-            for(; it != vect.end(); ++it)
-            {
-                auto j = it;     ++j;
-                if(j != (--vect.end())  && j != vect.end())
-                {
-                    *it = *j;// copy back to replace the removed element
-                }
-                else if(it == (--vect.end()) && j != vect.end())
-                {
-                    vect.pop_back();// remove the last element
-                }
-            }
+            vect.erase(it);
         }
 
         void erase(const iterator __1,  const iterator __2)
@@ -108,6 +106,11 @@ namespace be
         void emplace_back(Args&&... args)
         {
             vect.emplace_back(args...);
+        }
+
+        void emplace_front(Args&&... args)
+        {
+            vect.insert(vect.begin(), TYPE(args...));
         }
 
 

@@ -82,9 +82,10 @@
 		<Unit filename="include/common.h" />
 		<Unit filename="include/component.h" />
 		<Unit filename="include/f_time.h" />
-		<Unit filename="include/parser.h" />
+		<Unit filename="include/pan_handler.h" />
 		<Unit filename="include/random_vector.h" />
 		<Unit filename="include/text_input.h" />
+		<Unit filename="include/theme_parser.h" />
 		<Unit filename="include/trigger.h" />
 		<Unit filename="include/tsqueue.h" />
 		<Unit filename="include/value_adjuster.h" />

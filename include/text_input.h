@@ -22,7 +22,6 @@ namespace be
         enum class TIMER_STAGE   { TRIGGERD, DELAY, COUNT, NONE}       timer_stage = TIMER_STAGE::NONE;
 
         vec2d mouse;
-        bool on_hover;
 
         std::string text;
         std::string visible_text;
@@ -79,7 +78,7 @@ namespace be
                 is_active = true;
         }
 
-        void Logic(const vec2d& _mouse) override
+        void Logic(const vec2d _mouse) override
         {
             if(is_active)
             {
@@ -89,7 +88,8 @@ namespace be
 
                 if(on_hover == true && Administrator::get_instance()->get_key_state(this->view,"mouse_left") == Event::key_state::click)
                     in_focus = true;
-                else if (Administrator::get_instance()->get_active_view() != view   ||  (on_hover != true && Administrator::get_instance()->get_key_state(this->view,"mouse_left") == Event::key_state::click))
+                else if (Administrator::get_instance()->GET_ACTIVE_VIEW() != view   ||  (on_hover != true && Administrator::get_instance()->get_key_state(this->view,"mouse_left") == Event::key_state::click)
+                                        ||   (on_hover != true && Administrator::get_instance()->get_key_state(this->view,"mouse_right") == Event::key_state::click))
                     in_focus = false;
 
                 // shift pointer
@@ -315,7 +315,7 @@ namespace be
             }
         }
 
-        ///                                      TEXT INPUT INTERNAL
+        ///                                      TEXT INPUT INTERNALS
 
         void RESOLVE_VIEW()
         {
@@ -351,7 +351,7 @@ namespace be
                 {
                     if(text_header == 0)
                     {
-                        head = i; break;//
+                        head = i; break;
                     }
                     else if(i->width == text_header)
                     {
@@ -381,7 +381,7 @@ namespace be
                 }
 
 
-                // get visible text from info above
+                // get visible text with info above
                 visible_text = be::substr(text,head->index, tail->index+1);
             }
         }
@@ -598,6 +598,7 @@ namespace be
             ///                   PASTE
             if(ctrl && Administrator::get_instance()->get_key_state(view,"v") == Event::key_state::click)
             {
+                DELETE_SELECTED();
                 std::string CBT = SDL_GetClipboardText();
 
                 for(int i = 0; i < CBT.length(); i++)
@@ -675,13 +676,16 @@ namespace be
 
         void DELETE_SELECTED()
         {
-            int count = _select_tail->index - _select_head->index+1;
-            pointer = _select_tail;
-            delete_type = DELETE_TYPE::BACK;
-            for(int i = 0; i < count; i++)
-                REMOVE_CHAR();
-            delete_type = DELETE_TYPE::NONE;
-            select_stage = SELECT_STAGE::NONE;
+            if(select_stage == SELECT_STAGE::HEAD_AND_TAIL)
+            {
+               int count = _select_tail->index - _select_head->index+1;
+                pointer = _select_tail;
+                delete_type = DELETE_TYPE::BACK;
+                for(int i = 0; i < count; i++)
+                    REMOVE_CHAR();
+                delete_type = DELETE_TYPE::NONE;
+                select_stage = SELECT_STAGE::NONE;
+            }
         }
 
         void CUT()

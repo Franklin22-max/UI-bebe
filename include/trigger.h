@@ -17,14 +17,14 @@ namespace be
          *  uint32_t -> length of time the button has been held
          *  \ width and heights is for image in case
          */
-        std::function<void( STATE& , unsigned int )> callback = NULL;
+        std::function<void( STATE& , std::string key, unsigned int duration )> callback = NULL;
         text_renderer* TR;
         unsigned int held_start = 0;
         STATE state = STATE::none;
 
     public:
 
-        trigger(be::view* view, std::string uuid, std::string text, int x = 0, int y = 0,int w =0, int h = 0, std::function<void( STATE&, unsigned int )> callback = NULL)
+        trigger(be::view* view, std::string uuid, std::string text, int x = 0, int y = 0,int w =0, int h = 0, std::function<void( STATE&, std::string, unsigned int duration  )> callback = NULL)
         :component(view,uuid,x,y,w,h), callback(callback)
         {
             TR = new text_renderer(view,"",14,text);
@@ -45,28 +45,11 @@ namespace be
             is_active = true;
         }
 
-        void Logic(const vec2d& _mouse)
+        void Logic(const vec2d _mouse)
         {
             if(is_active)
             {
-                vec2d mouse = view->resolve_point(_mouse);
-                in_focus = (mouse.x >= pos.x && mouse.x <= pos.x + size.w && mouse.y >= pos.y && mouse.y <= pos.y + size.h);
 
-                if(in_focus && Administrator::get_instance()->get_key_state(view,"mouse left") == Event::key_state::click)
-                {
-                    state = STATE::click;
-                    held_start = SDL_GetTicks();
-                }
-                else if(in_focus && Administrator::get_instance()->get_key_state(view,"mouse left") == Event::key_state::held)
-                    state = STATE::held;
-                else if(in_focus && Administrator::get_instance()->get_key_state(view,"mouse left") == Event::key_state::released)
-                    state = STATE::release;
-                else
-                    state = STATE::none;
-
-                // run callback function if any was give
-                if(callback != NULL && (state == STATE::click || state == STATE::held || state == STATE::release))
-                    callback(state, (state == STATE::held)? SDL_GetTicks() - held_start  :   0 );
             }
         }
 

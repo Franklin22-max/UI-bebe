@@ -14,6 +14,7 @@
 #include "Theme.h"
 #include "trigger.h"
 #include "value_adjuster.h"
+#include "button.h"
 
 #define RENDERER_SYNC           SDL_RENDERER_PRESENTVSYNC
 #define RENDERER_ACCELERATED    SDL_RENDERER_ACCELERATED
@@ -45,7 +46,7 @@ namespace be
         text_input* text_in;
         text_input* text_in2;
 
-        value_adjustment* va;
+        //value_adjustment* va;
 
         SDL_Surface* surf;
         SDL_Texture* texture = NULL;
@@ -77,8 +78,9 @@ namespace be
 
             std::string err;
             theme::get_instance()->INIT(renderer);
-            theme::get_instance()->load_font("consolaz", R"(fonts\consolaz.ttf)",14,&err);
+            theme::get_instance()->load_font("consolaz", R"(fonts\calibri.ttf)",14,&err);
             theme::get_instance()->set_default_font("consolaz",14);
+            std::cout<<err;
 
             // create event object
             event = Event::get_instance();
@@ -95,19 +97,19 @@ namespace be
             vec2d size = {1400,1000};
             timer.set_max_FPS(240);
 
-            view1 = administrator->create_view(be::Administrator::ANY_POSITION,renderer,300,300,600,400,white,view::MODE::STATIC,size);
-            //view2 = administrator->create_view(be::Administrator::ALWAYS_ON_TOP,renderer,300,250,400,250,white,view::MODE::STATIC,size);
-            view3 = administrator->create_view(be::Administrator::ANY_POSITION,renderer,700,250,500,400,bebe,view::MODE::STATIC,size);
+            view1 = administrator->CREATE_VIEW(be::Administrator::ANY_POSITION,renderer,300,200,600,400,white,view::MODE::STATIC,size);
+            view2 = administrator->CREATE_VIEW(be::Administrator::ANY_POSITION,renderer,300,100,400,250,white,view::MODE::STATIC,size);
+            view3 = administrator->CREATE_VIEW(be::Administrator::ANY_POSITION,renderer,700,250,500,400,bebe,view::MODE::STATIC,size);
 
             //auto img = theme::get_instance()->Load_image("narayana",R"(images/Narayana.png)");
             //ir = new image_renderer(view2,img,0,0,600,360);
             tr = new text_renderer(view1,"Whenever dharma declines, oh son of Bharata and evil prevails, i incarnate myself, to destroy the evil-doers and restore dharma in the hearth of men. I am born from ages to ages.",black,200,50,be::text_renderer::WRAPPED);
-            wrp = new wrapper(view1,20,20,200,200,0,1);
+            //wrp = new wrapper(view1,20,20,200,200,0,1);
             text_in = new text_input(view1,"text input 1",200,300,250);
             text_in2 = new text_input(view3,"text input 2",200,200,250);
-            va = new value_adjustment(view3,"va1",0,194, 200,100);
+            //va = new value_adjustment(view3,"va1",0,194, 200,100);
 
-            va->Enable();
+            //va->Enable();
             text_in->Enable();
             text_in2->Enable();
 
@@ -117,7 +119,7 @@ namespace be
             if(narayana)
             {
                 uint32_t* p = (uint32_t*)narayana->pixels;
-                SDL_Surface* round_vishnu = make_round_edges(narayana,26.50);
+                SDL_Surface* round_vishnu = make_round_edges(narayana,30.0);
                 texture = SDL_CreateTextureFromSurface(renderer,round_vishnu);
 
                 SDL_FreeSurface(round_vishnu);
@@ -136,12 +138,12 @@ namespace be
 
 
             vec2d mouse;
-            if(Administrator::get_instance()->get_active_view() == view1)
+            if(Administrator::get_instance()->GET_ACTIVE_VIEW() == view1)
                 mouse = Administrator::get_instance()->get_mouse_pos(view1);
-            else if(Administrator::get_instance()->get_active_view() == view3)
+            else if(Administrator::get_instance()->GET_ACTIVE_VIEW() == view3)
                 mouse = Administrator::get_instance()->get_mouse_pos(view3);
 
-            be::view* v  = (Administrator::get_instance()->get_active_view() == view1)? view1 : view3;
+            be::view* v  = (Administrator::get_instance()->GET_ACTIVE_VIEW() == view1)? view1 : view3;
 
             if(Administrator::get_instance()->get_special_key_state("f5") == Event::key_state::held)
                 v->zoom_in();
@@ -166,9 +168,9 @@ namespace be
             text_in2->Update();
             text_in2->Render();
 
-            va->Logic(mouse);
+            /*va->Logic(mouse);
             va->Update();
-            va->Render();
+            va->Render();*/
 
             if(texture)
                 view1->RenderCopy(texture,NULL);

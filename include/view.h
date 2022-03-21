@@ -129,7 +129,7 @@ namespace be
             SDL_RendererInfo info;
             SDL_GetRendererInfo(renderer,&info);
             max_texture_size = {info.max_texture_width,info.max_texture_height};
-
+            // make sure that size is not greater than the maximum texture size of the device
             assigned_texture_size.w = std::min(info.max_texture_width,assigned_texture_size.w);
             assigned_texture_size.h = std::min(info.max_texture_height,assigned_texture_size.h);
             max_copied_size = texture_size = {0,0};

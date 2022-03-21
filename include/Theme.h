@@ -2,7 +2,6 @@
 #define THEME_MANAGER_H_INCLUDED
 
 #include "common.h"
-#include "File.h"
 
 namespace be
 {
@@ -12,24 +11,31 @@ namespace be
     class theme
     {
         theme() = default;
+        friend class theme_parser;
+        enum class Theme_object { IMAGE , FONT , COLOR , SOUND };
+
     public:
+
+        enum class DEFAULT
+        { PRIMARY, SECONDARY , BG_VIEW_PRIMARY, BG_VIEW_SECONDARY , FG_VIEW_PRIMARY, FG_VIEW_SECONDARY
+        , FG_TEXT_PRIMARY, FG_TEXT_SECONDARY , FG_LINK_PRIMARY, FG_LINK_SECONDARY , NONE };
+
+
         struct FONT_NODE { int font_size; TTF_Font* font;};
         struct IMG_NODE{ std::string path; SDL_Texture* img = nullptr; };
         struct MUSIC_NODE{ std::string path; Mix_Music* music; };
-        struct DEFAULT_FONT{ FONT_NODE* node = nullptr; std::string font_name; };
         struct COLOR_NODE{ SDL_Color color; };
     private:
         struct FONT_STACK{ std::string path; std::list<FONT_NODE> fonts; };
 
         std::unordered_map<std::string, IMG_NODE> images;
         std::unordered_map<std::string, FONT_STACK> fonts;
-        std::unordered_map<std::string, MUSIC_NODE> musics;
-        std::vector<COLOR_NODE> colors;
+        std::unordered_map<std::string, MUSIC_NODE> sounds;
+        std::unordered_map<std::string,COLOR_NODE> colors;
+        std::map<Theme_object, std::map<DEFAULT, id>> defaults;
 
         SDL_Renderer* renderer = nullptr;
-        DEFAULT_FONT default_font;
         static theme* instance;
-        bool has_defualt_font_changed = false;
     public:
         static theme* get_instance(){ return instance = (instance == nullptr)? new theme() : instance; };
 
@@ -50,12 +56,12 @@ namespace be
         /* \note order of adding colors indicates importance
          *    index (0 -> primary background color, 1 -> primary foreground color, 2 -> secondary background color,  3 -> secondary background color and so on).
          */
-        const COLOR_NODE* add_color(const SDL_Color cl)
+        const COLOR_NODE* add_color(std::string id ,const SDL_Color cl)
         {
             COLOR_NODE c;
             c.color = cl;
-            colors.push_back(c);
-            return &(colors[colors.size() - 1]);
+            colors[id] = c;
+            return &(colors[id]);
         }
 
         const IMG_NODE* Load_image(std::string uuid, std::string path, std::string* err = NULL)
@@ -117,6 +123,7 @@ namespace be
                     }
                 }
 
+                // Add font to font buffer
                 std::list<FONT_NODE> ft;
                 ft.push_back(f);
 
@@ -126,13 +133,9 @@ namespace be
                 fonts[font_name] = N;
 
                 // set font as default if no other font exist
-                if(fonts.size() == 1 && !default_font.node )
-                {
-                    default_font.node = &(*(fonts[font_name].fonts.begin()));
-                    default_font.font_name = font_name;
-                }
 
-                return &(*(--fonts[font_name].fonts.end()));
+
+                return nullptr;
             }
             else
             {
@@ -154,7 +157,7 @@ namespace be
 
             if(m)
             {
-                for(auto &i : musics)
+                for(auto &i : sounds)
                 {
                     if(i.first == uuid)
                     {
@@ -165,8 +168,8 @@ namespace be
                 N.music = m;
                 N.path = path;
 
-                musics[uuid] = N;
-                return &(musics[uuid]);
+                sounds[uuid] = N;
+                return &(sounds[uuid]);
             }
             else
             {
@@ -178,21 +181,13 @@ namespace be
 
         bool set_default_font(std::string font_name, int fontsize)
         {
-            auto f_node = __get_font(font_name,fontsize);
-            if(f_node)
-            {
-                default_font.node = f_node;
-                default_font.font_name = font_name;
-                has_defualt_font_changed = true;
-                return true;
-            }
-            else return false;
+
         }
 
 
-        const DEFAULT_FONT* get_default_font()
+        const FONT_NODE* get_default_font()
         {
-            return &default_font;
+            return nullptr;
         }
 
 
@@ -237,23 +232,16 @@ namespace be
 
         MUSIC_NODE* get_music(const std::string id)
         {
-            for(auto &m : musics)
-            {
-                if(m.first == id)
-                {
-                    return &(m.second);
-                }
-            }
+            for(auto &m : sounds)
+                if(m.first == id) return &(m.second);
+
             return nullptr;
         }
 
 
-        const COLOR_NODE* get_color(unsigned int index)
+        const COLOR_NODE* get_color(std::string id )
         {
-            if(index < colors.size())
-                return &colors[index];
-            else
-                return nullptr;
+            return &colors[id];
         }
 
 
@@ -273,12 +261,12 @@ namespace be
 
         void remove_music(const std::string id)
         {
-            for(auto i = musics.begin(); i != musics.end(); ++i)
+            for(auto i = sounds.begin(); i != sounds.end(); ++i)
             {
                 if(i->first == id)
                 {
                     Mix_FreeMusic(i->second.music);
-                    musics.erase(i);
+                    sounds.erase(i);
                     break;
                 }
             }
@@ -303,6 +291,8 @@ namespace be
         }
 
 
+
+
         void remove_font(const std::string id, int fontsize)
         {
             for(auto i = fonts.begin(); i != fonts.end(); ++i)
@@ -324,7 +314,9 @@ namespace be
                     break;
                 }
             }
-        }
+
+
+
 
         void clear()
         {
@@ -345,12 +337,12 @@ namespace be
             }
             images.erase(std::begin(images), std::end(images));
 
-            // clear musics
-            for(auto& node : musics)
+            // clear sounds
+            for(auto& node : sounds)
             {
                 Mix_FreeMusic(node.second.music);
             }
-            musics.erase(std::begin(musics), std::end(musics));
+            sounds.erase(std::begin(sounds), std::end(sounds));
         }
 
     };

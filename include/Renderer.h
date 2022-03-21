@@ -63,25 +63,13 @@ namespace be
 
         void load_Font(std::string font_name, int fs)
         {
-            const theme::FONT_NODE* f_node = theme::get_instance()->get_font(font_name,fs);
-            const theme::DEFAULT_FONT* d_font = theme::get_instance()->get_default_font();
+            const theme::FONT_NODE* f_node = theme::get_instance()->get_default_font();
 
             if(f_node)
             {
                 this->font_name = font_name;
                 this->font = f_node;
                 can_reload = true;
-            }
-            else if( d_font->node)
-            {
-                if(d_font->node->font && d_font->node != this->font)
-                {
-                    this->font = d_font->node;
-                    this->font_name = d_font->font_name;
-                    can_reload = true;
-                }
-                else
-                    be::Error::write_error("No default Font");
             }
             else be::Error::write_error("No default Font");
         }

@@ -9,10 +9,21 @@
 
 namespace be
 {
+    /** \brief  Positions views and also manage event allocation to different views
+     */
+
     class Administrator
     {
     public:
-        enum VIEW_PLACEMENT {ALWAYS_ON_TOP, ANY_POSITION, ALWAYS_ON_TOP_AND_GRAB_EVENT };
+        enum VIEW_PLACEMENT {ALWAYS_ON_TOP_AND_GRAB_EVENT = 0 , ALWAYS_ON_TOP = 1 , ANY_POSITION = 2};
+    private:
+        struct VIEW_NODE
+        {
+            VIEW_PLACEMENT placement;
+            be::view* View;
+            VIEW_NODE(VIEW_PLACEMENT placement , be::view* View)
+            : placement(placement), View(View)  {   };
+        };
 
         Administrator() { event = Event::get_instance(); };
         Administrator(const Administrator&) = delete;
@@ -21,12 +32,8 @@ namespace be
         Event* event;
         // the view with the event
         be::view* active_view = NULL;
-        // view which alway appears on top and grab event
-        be::random_vector<be::view*> alpha_views;
-        // view which alway appears on top but does not grab event
-        be::random_vector<be::view*> beta_views;
-        // view which occupies any position
-        be::random_vector<be::view*> omega_views;
+        // view which alway appears on top
+        be::random_vector<VIEW_NODE> views;
         // components that reqTESTres text inputs
         std::map<std::string,bool> text_components;
 
@@ -39,40 +46,57 @@ namespace be
 
 
 
-        void rearrange_views(be::random_vector<be::view*>& store ,int i)
+        void arrange_views()
         {
-            be::view* hold =  store[i];
-            // remove the element from it position and place it at the back
-            for(; i != store.size(); i++)
+            if(!views.empty())
             {
-                if(i + 1 < store.size())
+                bool inOrder = false;
+                while( !inOrder)
                 {
-                    store[i] = store[i + 1];// relocate elements to fill the position of our current view
+                    inOrder = true;
+                    be::random_vector<VIEW_NODE>::iterator prev;
+                    for(auto node = views.begin(); node != views.end(); ++node)
+                    {
+                        if(node != views.begin())
+                        {
+                            // based on how enum (VIEW_PLACEMENT) is index we are going to arrange the view
+                            if(node->placement < prev->placement)
+                            {
+                                inOrder = false;
+                                // swap nodes
+                                VIEW_NODE hold = (*node);
+                                (*node) = (*prev);
+                                (*prev) = hold;
+                            }
+                        }
+                        prev = node;
+                    }
                 }
-                else if(store[i] != hold   &&  i == store.size() - 1)
-                    store[i] = hold; // now place it at the very end
             }
         }
 
-        /** \brief
-         *
-         * \param  vector to search
-         * \param  view ptr to be found
-         * \return returns an iterator to the view and end() of container if not found
-         *
-         */
 
-        be::random_vector<be::view*>::iterator find(be::random_vector<be::view*>& store, be::view* view)
+
+
+
+        be::random_vector<VIEW_NODE>::iterator find(be::view* view)
         {
-            for(auto i = store.begin(); i != store.end(); ++i)
+            for(auto node = views.begin(); node != views.end(); ++node)
             {
-                if(*i  == view) return i;
+                if((*node).View  == view) return node;
             }
 
-            return store.end();
+            return views.end();
         }
 
 
+
+        void __remove_view(be::view* view)
+        {
+            be::random_vector<VIEW_NODE>::iterator it  = this->find(view);
+            if(it != views.end())
+                views.erase(it);
+        }
 
 
         static Administrator* instance;
@@ -80,7 +104,7 @@ namespace be
         static Administrator* get_instance(){ return instance = (instance != nullptr)? instance : new Administrator;};
 
 
-        const be::view* get_active_view()
+        const be::view* GET_ACTIVE_VIEW()
         {
             return active_view;
         }
@@ -91,22 +115,14 @@ namespace be
         }
 
 
-        void Destroy()
+        void DESTROY()
         {
-            for(auto &i : alpha_views)
-                delete i;
-            alpha_views.erase(alpha_views.begin(), alpha_views.end());
-
-            for(auto &i : beta_views)
-                delete i;
-            beta_views.erase(beta_views.begin(), beta_views.end());
-
-            for(auto &i : omega_views)
-                delete i;
-            omega_views.erase(omega_views.begin(), omega_views.end());
+            for(auto &node : views)
+                delete node.View;// delete view pointers before clearing the buffer
+            views.erase(views.begin(), views.end());
         }
 
-        HWND Get_Window_handler()
+        HWND GET_WINDOW_HANDLER()
         {
             SDL_SysWMinfo info;
             SDL_VERSION(&info.version);
@@ -115,37 +131,33 @@ namespace be
         }
 
 
-        view* create_view(VIEW_PLACEMENT placement,SDL_Renderer* renderer,int x,int y,int w=350,int h=600,SDL_Color bg = {0,0,0,0},view::MODE adjust = view::MODE::DYNAMIC, vec2d texture_size = {350,150})
+
+        void CHANGE_VIEW_PLACEMENT(be::view* view, VIEW_PLACEMENT placement)
+        {
+            if(view != nullptr && view != NULL)
+            {
+                be::random_vector<VIEW_NODE>::iterator node = this->find(view);
+                if(node != views.end())
+                    (*node).placement = placement;
+                else
+                    Error::write_error("Couldn't change view placement: view doesn't exist in admin");
+            }
+            else
+                Error::write_error("Couldn't change view placement: view pointer is empty");
+        }
+
+
+        view* CREATE_VIEW(VIEW_PLACEMENT placement,SDL_Renderer* renderer,int x,int y,int w=350,int h=600,SDL_Color bg = {0,0,0,0},view::MODE adjust = view::MODE::DYNAMIC, vec2d texture_size = {350,150})
         {
             view* __view = new view(renderer,x,y,w,h,bg,adjust,texture_size);
 
             if(__view)
             {
-                if(placement == ALWAYS_ON_TOP_AND_GRAB_EVENT)
-                {
-                    alpha_views.push_back(__view);
-                    __view = alpha_views[alpha_views.size() - 1];
-                    active_view = __view;
-                }
-                else if(placement == ALWAYS_ON_TOP)
-                {
-                    beta_views.push_back(__view);
-                    __view = beta_views[beta_views.size() - 1];
-
-                    if(alpha_views.size() == 0)
-                        active_view = __view;
-                }
-                else
-                {
-                    omega_views.push_back(__view);
-                    __view = omega_views[omega_views.size() - 1];
-
-                    if(alpha_views.size() == 0)
-                        active_view = __view;
-                }
-
+                views.push_front(VIEW_NODE(placement,__view));
+                arrange_views();
                 return __view;
             }
+            Error::write_error("Couldn't create view");
             return nullptr;
         }
 
@@ -153,123 +165,68 @@ namespace be
         void EVENT_POOL()
         {   // run event via function operator
             (*event)();
-            // set active view when mouse left is clicked
-            if(event->mouse_left.get_state() == Event::key_state::click || event->mouse_right.get_state() == Event::key_state::click)
+            // set active view when mouse is clicked
+            if(event->mouse_left.get_state() == Event::key_state::click || event->mouse_right.get_state() == Event::key_state::click || event->mouse_left.get_state() == Event::key_state::held || event->mouse_right.get_state() == Event::key_state::held)
             {
-                if(alpha_views.size() > 0)
+                for(auto node = views.begin(); node != views.end(); ++node)
                 {
-                    active_view = alpha_views[alpha_views.size() - 1];
-                }
-                else
-                {
-                    bool skip_omega = false;
-
-                    for(int i = beta_views.size() - 1; i >= 0; i--)
+                    if(node->placement == VIEW_PLACEMENT::ALWAYS_ON_TOP_AND_GRAB_EVENT)
                     {
-                        if(isViewInFocus(beta_views[i]))
-                        {
-                            if(i == beta_views.size() - 1)// if its already the last one
-                                active_view = beta_views[i];
-                            else
-                            {   // place it at the end
-                                rearrange_views(beta_views, i );
-                                active_view = beta_views[beta_views.size() - 1];
-                            }
-                            skip_omega = true;
-                            break;
-                        }
+                        // make active view only when view is in focus
+                        active_view = ( isViewInFocus(node->View))?  node->View : NULL;
+                        // arrange views
+                        arrange_views();
+                        break;
                     }
-
-                    if(!skip_omega)
+                    else if( isViewInFocus(node->View))
                     {
-                        for(int i = omega_views.size() - 1; i >= 0; i--)
-                        {
-                            if(isViewInFocus(omega_views[i]))
-                            {
-                                if(i == omega_views.size() - 1)// if its already the last one
-                                    active_view = omega_views[i];
-                                else
-                                {   // place it at the end
-                                    rearrange_views(omega_views,  i);
-                                    active_view = omega_views[omega_views.size() - 1];
-                                }
-                                break;
-                            }
-                        }
+                        VIEW_NODE hold = (*node);
+                        // remove node and add it to the front of the buffer
+                        __remove_view( node->View);
+                        views.push_front(hold);
+                        // arrange views
+                        arrange_views();
+                        // set the view as active view
+                        active_view = hold.View;
+                        break;
                     }
+                    else if(node == (--views.end()))
+                        active_view = NULL;
                 }
             }
         }
 
 
+
         void RENDER_PRESENT()
         {
-            for(auto &v : omega_views)
-                v->RenderPresent();
-
-            for(auto &v : beta_views)
-                v->RenderPresent();
-
-            for(auto &v : alpha_views)
-                v->RenderPresent();
+            for(int i = views.size()-1; i >= 0; i--)
+                views[i].View->RenderPresent();
         }
 
 
         void REMOVE_VIEW(be::view* view)
         {
-            auto it = find(alpha_views, view);
-            if(it != alpha_views.end())
+            be::random_vector<VIEW_NODE>::iterator it  = this->find(view);
+            if(it != views.end())
             {
-                if(*it == active_view)
-                {
-                    if(alpha_views.size() > 1)
-                        active_view = *(--it);
-                    else if(!beta_views.empty()  || !omega_views.empty())
-                        active_view = (!beta_views.empty())? *(--beta_views.end()) : *(--omega_views.end());
-                    else
-                        active_view = NULL;
-                }
-                auto __v = *it;
-                alpha_views.erase(it);
-                delete __v;
-            }
-            else
-            {
-                it = find(beta_views, view);
-                if(it != beta_views.end())
-                {
-                    if(*it == active_view)
-                    {
-                        if(beta_views.size() > 1)
-                            active_view = *(--it);
-                        else if(!omega_views.empty())
-                            active_view = *(--omega_views.end());
-                        else
-                            active_view = NULL;
-                    }
-                    auto __v = *it;
-                    beta_views.erase(it);
-                    delete __v;
-                }
-                else
-                {
-                    it = find(omega_views, view);
-                    if(it != omega_views.end())
-                    {
-                        if(*it == active_view)
-                        {
-                            if(omega_views.size() > 1)
-                                active_view = *(--it);
-                            else
-                                active_view = NULL;
-                        }
-                        auto __v = *it;
-                        omega_views.erase(it);
-                        delete __v;
-                    }
-                }
+                delete it->View;// delete view pointers before erasing
+                views.erase(it);
             }
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         /** \brief

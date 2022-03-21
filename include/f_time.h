@@ -21,7 +21,7 @@ namespace be
         double start_time = 0;
         double delta_time;
     public:
-        time(){ FPS = 120;}
+        time(){ FPS = 240;}
         time(double FPS)
         :FPS(FPS)
         {}

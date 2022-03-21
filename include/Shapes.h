@@ -180,14 +180,10 @@ namespace be
     /** \brief
      * \param A first line
      * \param B second line
-     * \param norm_A directional vector of line one must be  b/w -1.0 to 1.0
-     * \param norm_B directional vector of line one must be b/w -1.0 to 1.0
-     * \note function does not check if line is intersecting to check it use
-     *y
      * \sa  is_line_intersecting()
      */
 
-    inline vec2d get_line_intersection_point(const Line& A, const Line& B, const vec2d norm_A, const vec2d norm_B)
+    inline vec2d get_line_intersection_point(const Line& A, const Line& B)
     {
 
     }

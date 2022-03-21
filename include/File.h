@@ -5,13 +5,80 @@
 #include "Administrator.h"
 #include <string>
 #include <commdlg.h>
+#include "common.h"
+#include <fstream>
 
 
 namespace be
 {
 
+
+    class File
+    {
+        std::string path;
+        std::vector<std::string> lines;
+    public:
+        File(std::string path)
+        : path(path)
+        {
+            std::fstream file;
+            std::stringstream ss;
+            file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+            try
+            {
+                // Open files
+                file.open(path);
+                std::stringstream vShaderStream, fShaderStream;
+                // Read file’s buffer contents into streams
+                ss << file.rdbuf();
+                // close file handlers
+                file.close();
+
+                // Convert stream into GLchar array
+                //vertexCode = vShaderStream.str();
+                while(ss.peek() != EOF)
+                {
+                    std::string linedata;
+                    std::getline(ss,linedata);
+                    lines.push_back(linedata.c_str());
+                }
+            }
+            catch(std::ifstream::failure e)
+            {
+                Error::write_error("Couldn't open file");
+            }
+        }
+
+
+
+        uint32_t getFileSize()
+        {
+            uint32_t size = 0;
+            for(int i = 0; i < lines.size(); i++)
+                size += lines[i].size();
+            return size;
+        }
+
+
+        std::string readLine(uint32_t line)
+        {
+            line = line - 1;
+            if(line >= 0 && line < lines.size())
+                return lines[line];
+            else
+                return "";
+        }
+
+
+
+    };
+
+
+
+#ifdef WIN32// Functions below are windows specific
+
    // Returns an empty string if dialog is canceled
-    inline std::string savefilename(char *filter = "All Files (*.*)\0*.*\0", HWND owner = Administrator::get_instance()->Get_Window_handler())
+    inline std::string savefilename(char *filter = "All Files (*.*)\0*.*\0", HWND owner = Administrator::get_instance()->GET_WINDOW_HANDLER())
     {
         OPENFILENAME ofn;
         char fileName[MAX_PATH] = "";
@@ -35,7 +102,7 @@ namespace be
 
 
     // Returns an empty string if dialog is canceled
-    inline std::string openfilename(char *filter = "All Files (*.*)\0*.*\0", HWND owner = Administrator::get_instance()->Get_Window_handler())
+    inline std::string openfilename(char *filter = "All Files (*.*)\0*.*\0", HWND owner = Administrator::get_instance()->GET_WINDOW_HANDLER())
     {
         OPENFILENAME ofn;
         char fileName[MAX_PATH] = "";
@@ -74,7 +141,7 @@ namespace be
         // Initialize CHOOSECOLOR
         ZeroMemory(&cc, sizeof(cc));
         cc.lStructSize = sizeof(cc);
-        cc.hwndOwner =  Administrator::get_instance()->Get_Window_handler();
+        cc.hwndOwner =  Administrator::get_instance()->GET_WINDOW_HANDLER();
         cc.lpCustColors = (LPDWORD) acrCustClr;
         cc.rgbResult = rgbCurrent;
         cc.Flags = CC_FULLOPEN | CC_RGBINIT;
@@ -88,6 +155,8 @@ namespace be
             return cl;
         }
     }
+
+#endif
 
 }
 
