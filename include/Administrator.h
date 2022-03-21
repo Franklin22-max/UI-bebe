@@ -32,7 +32,7 @@ namespace be
         Event* event;
         // the view with the event
         be::view* active_view = NULL;
-        // view which alway appears on top
+        // buffer for storing views
         be::random_vector<VIEW_NODE> views;
         // components that reqTESTres text inputs
         std::map<std::string,bool> text_components;
