@@ -15,6 +15,8 @@
 #include "trigger.h"
 #include "value_adjuster.h"
 #include "button.h"
+#include "string_handler.h"
+#include "theme_parser.h"
 
 #define RENDERER_SYNC           SDL_RENDERER_PRESENTVSYNC
 #define RENDERER_ACCELERATED    SDL_RENDERER_ACCELERATED

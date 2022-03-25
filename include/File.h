@@ -70,6 +70,15 @@ namespace be
         }
 
 
+        std::vector<std::string>& get_file_buffer()
+        {
+            return this->lines;
+        }
+
+        bool empty()
+        {
+            return lines.empty();
+        }
 
     };
 
