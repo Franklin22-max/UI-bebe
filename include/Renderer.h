@@ -20,6 +20,8 @@ namespace be
         virtual void set(std::string key, double value) = 0;
     };
 
+
+
     ///                             TEXT RENDERER
     class text_renderer : public Renderder
     {
@@ -61,9 +63,9 @@ namespace be
         }
 
 
-        void load_Font(std::string font_name, int fs)
+        void load_Font(std::string font_name, int fs, theme::DEFAULT_FONT_OPTION opt)
         {
-            const theme::FONT_NODE* f_node = theme::get_instance()->get_default_font();
+            const theme::FONT_NODE* f_node = theme::get_instance()->get_default_font(opt);
 
             if(f_node)
             {

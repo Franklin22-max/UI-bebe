@@ -1,0 +1,13 @@
+<COLOR>
+
+# TEXT , LINK , BUTTON_FG
+# ID "WHITE"
+# VALUE "200,200,200,200"
+
+
+# VIEW_BE
+# ID "ligth_dark"
+# VALUE "20,20,20,20"
+
+
+</COLOR>

@@ -16,9 +16,10 @@ namespace be
 
     public:
 
-        enum class DEFAULT
-        { PRIMARY, SECONDARY , BG_VIEW_PRIMARY, BG_VIEW_SECONDARY , FG_VIEW_PRIMARY, FG_VIEW_SECONDARY
-        , FG_TEXT_PRIMARY, FG_TEXT_SECONDARY , FG_LINK_PRIMARY, FG_LINK_SECONDARY , NONE };
+        enum class DEFAULT_SOUND_OPTION { NOTIFICATION , ERROR, NONE };
+        enum class DEFAULT_IMAGE_OPTION { BG_VIEW = 3 , BG_COMPONENT, NONE };
+        enum class DEFAULT_FONT_OPTION { COMPONENT = 6, TEXT, LINK, NONE };
+        enum class DEFAULT_COLOR_OPTION { TEXT = 10 , VIEW_PRIMARY , VIEW_SECONDARY, COMPONENT_BG, LINK, LINK_HOVER, LINK_CLICK, BUTTON_BG, BUTTON_FG, NONE};
 
 
         struct FONT_NODE { int font_size; TTF_Font* font;};
@@ -26,19 +27,29 @@ namespace be
         struct MUSIC_NODE{ std::string path; Mix_Music* music; };
         struct COLOR_NODE{ SDL_Color color; };
     private:
+
         struct FONT_STACK{ std::string path; std::list<FONT_NODE> fonts; };
 
         std::unordered_map<std::string, IMG_NODE> images;
         std::unordered_map<std::string, FONT_STACK> fonts;
         std::unordered_map<std::string, MUSIC_NODE> sounds;
         std::unordered_map<std::string,COLOR_NODE> colors;
-        std::map<Theme_object, std::map<DEFAULT, id>> defaults;
+
+        struct DEFAULT_NODE
+        {
+            std::string id;
+            void* ptr;
+            DEFAULT_NODE(std::string id, void* ptr)
+            :id(id), ptr(ptr) {};
+        };
+
+        //stores the default for , the int in the map is better meant for enum but for compatibility reasons int is used instead
+        std::map<Theme_object, std::map<int, DEFAULT_NODE>> defaults;
 
         SDL_Renderer* renderer = nullptr;
         static theme* instance;
     public:
         static theme* get_instance(){ return instance = (instance == nullptr)? new theme() : instance; };
-
 
         void Destroy_theme()
         {
@@ -56,6 +67,7 @@ namespace be
         /* \note order of adding colors indicates importance
          *    index (0 -> primary background color, 1 -> primary foreground color, 2 -> secondary background color,  3 -> secondary background color and so on).
          */
+
         const COLOR_NODE* add_color(std::string id ,const SDL_Color cl)
         {
             COLOR_NODE c;
@@ -179,17 +191,59 @@ namespace be
             }
         }
 
-        bool set_default_font(std::string font_name, int fontsize)
-        {
 
+
+        bool set_default_font(FONT_NODE* font_obj, DEFAULT_FONT_OPTION opt)
+        {
+            //if(font_obj != nullptr)
+                //(defaults[Theme_object::FONT])[(int)opt] = DEFAULT_NODE()
         }
 
 
-        const FONT_NODE* get_default_font()
+        const FONT_NODE* get_default_font(DEFAULT_FONT_OPTION opt)
         {
-            return nullptr;
+            DEFAULT_NODE* node = &(defaults[Theme_object::FONT])[(int)opt];
+            if(node->id != "")
+            {
+                return (FONT_NODE*)node->ptr;
+            }
+            else
+                return nullptr;
         }
 
+        const COLOR_NODE* get_default_color(DEFAULT_COLOR_OPTION opt)
+        {
+            DEFAULT_NODE* node = &(defaults[Theme_object::COLOR])[(int)opt];
+            if(node->id != "")
+            {
+                return (COLOR_NODE*)node->ptr;
+            }
+            else
+                return nullptr;
+        }
+
+
+        const IMG_NODE* get_default_image(DEFAULT_IMAGE_OPTION opt)
+        {
+            DEFAULT_NODE* node = &(defaults[Theme_object::IMAGE])[(int)opt];
+            if(node->id != "")
+            {
+                return (IMG_NODE*)node->ptr;
+            }
+            else
+                return nullptr;
+        }
+
+        const MUSIC_NODE* get_default_sound(DEFAULT_COLOR_OPTION opt)
+        {
+            DEFAULT_NODE* node = &(defaults[Theme_object::SOUND])[(int)opt];
+            if(node->id != "")
+            {
+                return (MUSIC_NODE*)node->ptr;
+            }
+            else
+                return nullptr;
+        }
 
         const IMG_NODE* get_image(const std::string id)
         {
@@ -204,7 +258,7 @@ namespace be
         }
 
     private:
-        FONT_NODE* __get_font(std::string& font_name, int& font_size)
+        FONT_NODE* __get_font(std::string& font_name, int font_size = 10)
         {
             std::string path = "";
             for(auto &i : fonts)
@@ -222,7 +276,7 @@ namespace be
             }
             // trial loading font
             return __load_font(font_name,path,font_size);
-    }
+        }
     public:
         const FONT_NODE* get_font(std::string font_name, int font_size)
         {
@@ -314,6 +368,7 @@ namespace be
                     break;
                 }
             }
+        }
 
 
 
@@ -345,7 +400,8 @@ namespace be
             sounds.erase(std::begin(sounds), std::end(sounds));
         }
 
-    };
+};
+
 }
 
 #endif // THEME_MANAGER_H_INCLUDED

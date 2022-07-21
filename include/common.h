@@ -23,6 +23,7 @@
 
 #include "Error.h"
 #include "random_vector.h"
+#include "string_handler.h"
 
 
 namespace be
@@ -50,40 +51,6 @@ namespace be
         struct { int data[4];};
     };
 
-
-    inline std::string to_string(double num)
-    {
-        std::stringstream ss;
-        ss << num;
-        return ss.str();
-    }
-
-    inline double to_number(std::string str)
-    {
-        double num;
-        std::stringstream ss;
-        ss << str;
-        ss >> num;
-        return num;
-    }
-
-    inline std::string substr(const std::string& src, int s, int e)
-    {
-        std::string h("");
-        for(; s < e; s++)
-            h += src[s];
-        return h;
-    }
-
-    inline std::string insert(const std::string& src, int i, std::string value)
-    {
-        return (substr(src,0,i) + value + substr(src,i,src.length()));
-    }
-
-    inline std::string remove(const std::string& src, int i, uint32_t length = 1)
-    {
-        return (substr(src,0,i) + substr(src,i + length ,src.length()));
-    }
 
     inline bool operator==(const vec2d& A, const vec2d& B)
     {
